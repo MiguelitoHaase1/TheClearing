@@ -419,7 +419,7 @@ const Experiences = ({ profile, spurAnswers, ehrConnected }: ExperiencesProps) =
                 {id}
               </span>
             ))}
-            {Object.keys(spurAnswers).length > 0 && (
+            {Object.keys(spurAnswers || {}).length > 0 && (
               <span className="px-2 py-1 bg-secondary text-foreground text-[11px] rounded-full border border-border font-medium flex items-center gap-1">
                 <Brain className="w-2.5 h-2.5 text-primary" />
                 SPUR profile
