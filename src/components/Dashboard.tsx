@@ -289,10 +289,10 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
             <span className="text-xs font-semibold text-primary uppercase tracking-wider">Your experience evolves</span>
           </div>
           <h3 className="text-lg font-serif font-bold text-foreground mb-2">
-            {persona.hasData ? "Keep going — your persona sharpens with every answer" : "Answer a few questions to discover your persona"}
+            {persona.hasData ? "Keep deepening your persona" : "Deepen your persona with a few questions"}
           </h3>
           <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-            Every response enriches your radar profile and unlocks more personalized experiences. The more you share, the more your app transforms — coaching style, content, nudges, and mini-apps all adapt to who you are.
+            Every answer sharpens your persona and reshapes the radar above. The deeper your profile, the more your experiences transform — coaching style, content, and mini-apps all adapt to who you truly are.
           </p>
           <div className="space-y-2 mb-4">
             {[
