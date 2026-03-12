@@ -274,7 +274,7 @@ const Experiences = ({ profile, spurAnswers, ehrConnected }: ExperiencesProps) =
           {/* Suggestion chips */}
           {experiences.length === 0 && !isGenerating && (
             <div className="mt-4">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2 font-semibold">Try something like…</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2 font-semibold">Based on your data and persona, we recommend…</p>
               <div className="flex flex-wrap gap-2">
                 {PROMPT_SUGGESTIONS.slice(0, 4).map((s, i) => (
                   <button key={i} onClick={() => { setPrompt(s); }}
