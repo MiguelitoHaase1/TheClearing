@@ -51,7 +51,7 @@ const Welcome = ({ onStart }: WelcomeProps) => {
         </motion.button>
 
         <p className="text-xs text-muted-foreground mt-6">
-          A personalized wellness experience — built for you, by you.
+          90 seconds to a product that knows you. Your data stays yours — always.
         </p>
       </motion.div>
     </div>
