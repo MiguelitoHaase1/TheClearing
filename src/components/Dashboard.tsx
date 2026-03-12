@@ -74,7 +74,7 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
   const primaryGoal = profile.healthGoals[0] || "energy";
   const tip = DAILY_TIPS[primaryGoal] || DAILY_TIPS.energy;
 
-  const answeredCount = Object.keys(spurAnswers).length;
+  const answeredCount = Object.keys(spurAnswers || {}).length;
   const totalQuestions = SPUR_QUESTIONS.length;
   const allSpurComplete = answeredCount >= totalQuestions;
 
