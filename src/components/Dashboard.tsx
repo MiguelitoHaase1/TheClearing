@@ -8,6 +8,10 @@ import type { UserProfile } from "@/pages/Index";
 
 interface DashboardProps {
   profile: UserProfile;
+  spurAnswers: Record<string, number>;
+  setSpurAnswers: React.Dispatch<React.SetStateAction<Record<string, number>>>;
+  ehrConnected: boolean;
+  setEhrConnected: React.Dispatch<React.SetStateAction<boolean>>;
   onRestart: () => void;
 }
 
