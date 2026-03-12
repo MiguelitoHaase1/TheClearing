@@ -197,8 +197,18 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
 
       <div className="max-w-lg mx-auto px-6 space-y-5">
 
-        {/* ===== PERSONA CARD ===== */}
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+        {/* Daily nudge */}
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="bg-card rounded-2xl border border-border p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
+          <div className="flex items-center gap-2 mb-3">
+            <Sun className="w-4 h-4 text-primary" />
+            <span className="text-xs font-semibold text-primary uppercase tracking-wider">Today's nudge</span>
+          </div>
+          <p className="text-foreground text-base leading-relaxed font-serif">{tip}</p>
+        </motion.div>
+
+        {/* ===== PERSONA CARD + RADAR ===== */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="bg-card rounded-2xl border border-primary/20 overflow-hidden" style={{ boxShadow: "var(--shadow-soft)" }}>
           
           {/* Persona header */}
@@ -209,7 +219,6 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
             </div>
             
             <div className="flex items-start gap-4">
-              {/* Avatar circle with initial */}
               <div className="w-14 h-14 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center flex-shrink-0">
                 <span className="text-xl font-serif font-bold text-primary">
                   {profile.name.charAt(0).toUpperCase()}
@@ -272,16 +281,6 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
           </div>
         </motion.div>
 
-        {/* Daily nudge */}
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          className="bg-card rounded-2xl border border-border p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
-          <div className="flex items-center gap-2 mb-3">
-            <Sun className="w-4 h-4 text-primary" />
-            <span className="text-xs font-semibold text-primary uppercase tracking-wider">Today's nudge</span>
-          </div>
-          <p className="text-foreground text-base leading-relaxed font-serif">{tip}</p>
-        </motion.div>
-
         {/* AI teaser — what sharing more unlocks */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
           className="bg-card rounded-2xl border border-primary/20 p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
@@ -290,10 +289,10 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
             <span className="text-xs font-semibold text-primary uppercase tracking-wider">Your experience evolves</span>
           </div>
           <h3 className="text-lg font-serif font-bold text-foreground mb-2">
-            {persona.hasData ? "Keep going — your persona sharpens with every answer" : "Answer a few questions to discover your persona"}
+            {persona.hasData ? "Keep deepening your persona" : "Deepen your persona with a few questions"}
           </h3>
           <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-            Every response enriches your radar profile and unlocks more personalized experiences. The more you share, the more your app transforms — coaching style, content, nudges, and mini-apps all adapt to who you are.
+            Every answer sharpens your persona and reshapes the radar above. The deeper your profile, the more your experiences transform — coaching style, content, and mini-apps all adapt to who you truly are.
           </p>
           <div className="space-y-2 mb-4">
             {[
