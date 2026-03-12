@@ -79,7 +79,8 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
   const allSpurComplete = answeredCount >= totalQuestions;
 
   // Find the next unanswered question
-  const nextUnansweredIdx = SPUR_QUESTIONS.findIndex((q) => spurAnswers[q.id] === undefined);
+  const safeSpurAnswers = spurAnswers || {};
+  const nextUnansweredIdx = SPUR_QUESTIONS.findIndex((q) => safeSpurAnswers[q.id] === undefined);
   const currentQ = nextUnansweredIdx >= 0 ? nextUnansweredIdx : 0;
 
   const handleSpurAnswer = (questionId: string, answerIdx: number) => {
