@@ -74,12 +74,13 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
   const primaryGoal = profile.healthGoals[0] || "energy";
   const tip = DAILY_TIPS[primaryGoal] || DAILY_TIPS.energy;
 
-  const answeredCount = Object.keys(spurAnswers).length;
+  const answeredCount = Object.keys(spurAnswers || {}).length;
   const totalQuestions = SPUR_QUESTIONS.length;
   const allSpurComplete = answeredCount >= totalQuestions;
 
   // Find the next unanswered question
-  const nextUnansweredIdx = SPUR_QUESTIONS.findIndex((q) => spurAnswers[q.id] === undefined);
+  const safeSpurAnswers = spurAnswers || {};
+  const nextUnansweredIdx = SPUR_QUESTIONS.findIndex((q) => safeSpurAnswers[q.id] === undefined);
   const currentQ = nextUnansweredIdx >= 0 ? nextUnansweredIdx : 0;
 
   const handleSpurAnswer = (questionId: string, answerIdx: number) => {
@@ -88,7 +89,7 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
     const newSessionCount = sessionAnswered + 1;
     setSessionAnswered(newSessionCount);
 
-    const newTotal = Object.keys(newAnswers).length;
+    const newTotal = Object.keys(newAnswers || {}).length;
 
     if (newTotal >= totalQuestions) {
       // All done!
