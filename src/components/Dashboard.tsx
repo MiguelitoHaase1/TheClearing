@@ -88,7 +88,7 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
     const newSessionCount = sessionAnswered + 1;
     setSessionAnswered(newSessionCount);
 
-    const newTotal = Object.keys(newAnswers).length;
+    const newTotal = Object.keys(newAnswers || {}).length;
 
     if (newTotal >= totalQuestions) {
       // All done!
