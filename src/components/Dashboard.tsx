@@ -8,6 +8,10 @@ import type { UserProfile } from "@/pages/Index";
 
 interface DashboardProps {
   profile: UserProfile;
+  spurAnswers: Record<string, number>;
+  setSpurAnswers: React.Dispatch<React.SetStateAction<Record<string, number>>>;
+  ehrConnected: boolean;
+  setEhrConnected: React.Dispatch<React.SetStateAction<boolean>>;
   onRestart: () => void;
 }
 
@@ -57,14 +61,12 @@ const EHR_SOURCES = [
   { id: "manual", name: "Enter manually", icon: "📝" },
 ];
 
-const Dashboard = ({ profile, onRestart }: DashboardProps) => {
-  const [spurAnswers, setSpurAnswers] = useState<Record<string, number>>({});
+const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrConnected, onRestart }: DashboardProps) => {
   const [showSpur, setShowSpur] = useState(false);
   const [sessionAnswered, setSessionAnswered] = useState(0);
   const [sessionDone, setSessionDone] = useState(false);
   const [showEhr, setShowEhr] = useState(false);
   const [ehrSource, setEhrSource] = useState<string | null>(null);
-  const [ehrConnected, setEhrConnected] = useState(false);
 
   const greeting = new Date().getHours() < 12 ? "Good morning"
     : new Date().getHours() < 17 ? "Good afternoon" : "Good evening";
