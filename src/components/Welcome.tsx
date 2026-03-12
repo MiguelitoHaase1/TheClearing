@@ -31,8 +31,11 @@ const Welcome = ({ onStart }: WelcomeProps) => {
 
         <div className="w-12 h-px bg-primary/40 mx-auto my-6" />
 
-        <p className="text-base text-muted-foreground leading-relaxed mb-10">
-          Your health and your passions dictate your app experience. A personal guide shaped around what matters most to you.
+        <p className="text-base text-muted-foreground leading-relaxed mb-4">
+          Three questions. That's all it takes to start building an experience that's uniquely yours.
+        </p>
+        <p className="text-sm text-muted-foreground leading-relaxed mb-10">
+          You own your data. You control what you share. The more you put in, the more the app transforms around you.
         </p>
 
         <motion.button
@@ -48,7 +51,7 @@ const Welcome = ({ onStart }: WelcomeProps) => {
         </motion.button>
 
         <p className="text-xs text-muted-foreground mt-6">
-          A personalized wellness experience — built for you, by you.
+          90 seconds to a product that knows you. Your data stays yours — always.
         </p>
       </motion.div>
     </div>
