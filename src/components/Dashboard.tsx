@@ -197,8 +197,18 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
 
       <div className="max-w-lg mx-auto px-6 space-y-5">
 
-        {/* ===== PERSONA CARD ===== */}
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+        {/* Daily nudge */}
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="bg-card rounded-2xl border border-border p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
+          <div className="flex items-center gap-2 mb-3">
+            <Sun className="w-4 h-4 text-primary" />
+            <span className="text-xs font-semibold text-primary uppercase tracking-wider">Today's nudge</span>
+          </div>
+          <p className="text-foreground text-base leading-relaxed font-serif">{tip}</p>
+        </motion.div>
+
+        {/* ===== PERSONA CARD + RADAR ===== */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="bg-card rounded-2xl border border-primary/20 overflow-hidden" style={{ boxShadow: "var(--shadow-soft)" }}>
           
           {/* Persona header */}
@@ -209,7 +219,6 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
             </div>
             
             <div className="flex items-start gap-4">
-              {/* Avatar circle with initial */}
               <div className="w-14 h-14 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center flex-shrink-0">
                 <span className="text-xl font-serif font-bold text-primary">
                   {profile.name.charAt(0).toUpperCase()}
@@ -270,16 +279,6 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
               </p>
             )}
           </div>
-        </motion.div>
-
-        {/* Daily nudge */}
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          className="bg-card rounded-2xl border border-border p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
-          <div className="flex items-center gap-2 mb-3">
-            <Sun className="w-4 h-4 text-primary" />
-            <span className="text-xs font-semibold text-primary uppercase tracking-wider">Today's nudge</span>
-          </div>
-          <p className="text-foreground text-base leading-relaxed font-serif">{tip}</p>
         </motion.div>
 
         {/* AI teaser — what sharing more unlocks */}
