@@ -408,7 +408,7 @@ const Experiences = ({ profile, spurAnswers, ehrConnected }: ExperiencesProps) =
               <Wand2 className="w-7 h-7 text-muted-foreground" />
             </div>
             <p className="text-sm text-muted-foreground font-serif italic">
-              Your experiences appear here. Prompt above to build your first one.
+              "I forgot I had room for this." Prompt above to discover what emerges.
             </p>
           </motion.div>
         )}
