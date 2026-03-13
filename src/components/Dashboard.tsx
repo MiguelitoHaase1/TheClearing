@@ -209,6 +209,27 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
           <p className="text-foreground text-base leading-relaxed font-serif">{tip}</p>
         </motion.div>
 
+        {/* Your Light nudge */}
+        <motion.button
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          onClick={onGoToLight}
+          className="w-full bg-sage/10 rounded-2xl border border-sage/25 p-5 text-left group hover:border-sage/40 transition-all"
+          style={{ boxShadow: "var(--shadow-card)" }}
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-sage/15 flex items-center justify-center flex-shrink-0">
+              <Sun className="w-5 h-5 text-sage" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-sage font-semibold uppercase tracking-wider mb-0.5">Your Light</p>
+              <p className="text-sm font-serif font-semibold text-foreground">The noise is clearing. What will you fill the space with?</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-sage group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
+          </div>
+        </motion.button>
+
         {/* ===== PERSONA CARD + RADAR ===== */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="bg-card rounded-2xl border border-primary/20 overflow-hidden" style={{ boxShadow: "var(--shadow-soft)" }}>
