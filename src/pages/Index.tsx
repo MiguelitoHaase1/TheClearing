@@ -62,12 +62,15 @@ const Index = () => {
           setEhrConnected={setEhrConnected}
           onRestart={() => {
             setScreen("welcome");
-            setProfile({ name: "", healthGoals: [], passions: [] });
+            setProfile({ name: "", healthGoals: [], passions: [], currentWeight: null, goalWeight: null, gender: "", age: null });
             setSpurAnswers({});
             setEhrConnected(false);
             setActiveTab("home");
+            setWeightLog([]);
           }}
           onGoToLight={() => setActiveTab("experiences")}
+          weightLog={weightLog}
+          setWeightLog={setWeightLog}
         />
       ) : (
         <Experiences
