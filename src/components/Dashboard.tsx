@@ -186,8 +186,9 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
       <div className="px-6 pt-8 pb-4">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <div>
-            <p className="text-sm text-muted-foreground">{greeting},</p>
-            <h1 className="text-2xl font-serif font-bold text-foreground">{profile.name}</h1>
+            <p className="text-xs text-primary font-semibold uppercase tracking-wider">Your Roots</p>
+            <h1 className="text-2xl font-serif font-bold text-foreground">{greeting}, {profile.name}</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">Who you are under the noise.</p>
           </div>
           <button onClick={onRestart} className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground" title="Start over">
             <RotateCcw className="w-4 h-4" />
@@ -501,7 +502,7 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
         {/* Footer */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-center pt-4 pb-8">
           <p className="text-xs text-muted-foreground italic font-serif">
-            Your health and your passions dictate your app experience.
+            Your roots ground you. The clearing was always there.
           </p>
         </motion.div>
       </div>

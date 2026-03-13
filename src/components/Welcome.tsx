@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Heart, Sparkles } from "lucide-react";
+import { TreePine, Sparkles } from "lucide-react";
 
 interface WelcomeProps {
   onStart: () => void;
@@ -11,31 +11,31 @@ const Welcome = ({ onStart }: WelcomeProps) => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.8 }}
         className="max-w-md w-full text-center"
       >
         {/* Logo mark */}
         <div className="mb-8 flex justify-center">
-          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-            <Heart className="w-10 h-10 text-primary" strokeWidth={1.5} />
+          <div className="w-20 h-20 rounded-full bg-sage/10 flex items-center justify-center">
+            <TreePine className="w-10 h-10 text-sage" strokeWidth={1.5} />
           </div>
         </div>
 
         <h1 className="text-4xl font-serif font-bold text-foreground mb-3 tracking-tight">
-          Kaitality
+          The Clearing
         </h1>
 
         <p className="text-lg text-muted-foreground mb-2 font-serif italic">
-          Sustained Success
+          Discover your clearing.
         </p>
 
-        <div className="w-12 h-px bg-primary/40 mx-auto my-6" />
+        <div className="w-12 h-px bg-sage/40 mx-auto my-6" />
 
         <p className="text-base text-muted-foreground leading-relaxed mb-4">
-          Three questions. That's all it takes to start building an experience that's uniquely yours.
+          When the noise about food goes quiet, something opens up — focus, strength, peace. A clearing that was always there.
         </p>
         <p className="text-sm text-muted-foreground leading-relaxed mb-10">
-          You own your data. You control what you share. The more you put in, the more the app transforms around you.
+          Three questions to start. Your <span className="text-primary font-medium">roots</span> ground you. Your <span className="text-sage font-medium">light</span> emerges.
         </p>
 
         <motion.button
@@ -46,12 +46,12 @@ const Welcome = ({ onStart }: WelcomeProps) => {
         >
           <span className="flex items-center justify-center gap-2">
             <Sparkles className="w-4 h-4" />
-            Begin Your Journey
+            Step Into The Clearing
           </span>
         </motion.button>
 
         <p className="text-xs text-muted-foreground mt-6">
-          90 seconds to a product that knows you. Your data stays yours — always.
+          90 seconds. Your data stays yours — always.
         </p>
       </motion.div>
     </div>

@@ -24,8 +24,8 @@
     --muted: 40 20% 93%;
     --muted-foreground: 0 0% 42%;
 
-    --accent: 120 12% 76%;
-    --accent-foreground: 0 0% 10%;
+    --accent: 145 32% 42%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -47,8 +47,7 @@
 
     /* Custom tokens */
     --coral: 17 62% 60%;
-    --coral-light: 17 62% 60%;
-    --sage: 120 12% 76%;
+    --sage: 145 32% 42%;
     --lavender: 255 16% 80%;
     --tan: 30 25% 76%;
     --text-secondary: 0 0% 42%;

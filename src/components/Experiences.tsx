@@ -209,9 +209,10 @@ const Experiences = ({ profile, spurAnswers, ehrConnected }: ExperiencesProps) =
       {/* Header */}
       <div className="px-6 pt-8 pb-2">
         <div className="max-w-lg mx-auto">
-          <h1 className="text-2xl font-serif font-bold text-foreground">Your Experiences</h1>
+          <p className="text-xs text-sage font-semibold uppercase tracking-wider">Your Light</p>
+          <h1 className="text-2xl font-serif font-bold text-foreground">What emerges when the noise clears</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Describe what you want — we'll build it around your profile.
+            Describe what you want — we'll build it around who you are.
           </p>
         </div>
       </div>
@@ -241,8 +242,8 @@ const Experiences = ({ profile, spurAnswers, ehrConnected }: ExperiencesProps) =
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="bg-card rounded-2xl border border-primary/20 p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
           <div className="flex items-center gap-2 mb-3">
-            <Wand2 className="w-4 h-4 text-primary" />
-            <span className="text-xs font-semibold text-primary uppercase tracking-wider">Build an experience</span>
+            <Wand2 className="w-4 h-4 text-sage" />
+            <span className="text-xs font-semibold text-sage uppercase tracking-wider">Build an experience</span>
           </div>
           <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
             Tell us what you'd like and we'll generate a personalized experience using your profile data.
@@ -407,7 +408,7 @@ const Experiences = ({ profile, spurAnswers, ehrConnected }: ExperiencesProps) =
               <Wand2 className="w-7 h-7 text-muted-foreground" />
             </div>
             <p className="text-sm text-muted-foreground font-serif italic">
-              Your experiences appear here. Prompt above to build your first one.
+              "I forgot I had room for this." Prompt above to discover what emerges.
             </p>
           </motion.div>
         )}
