@@ -126,8 +126,11 @@ const Onboarding = ({ profile, setProfile, onComplete }: OnboardingProps) => {
       <h2 className="text-2xl font-serif font-bold text-foreground mb-2">
         What are you passionate about?
       </h2>
-      <p className="text-muted-foreground mb-6 text-sm">
-        We weave your passions into your wellness plan.
+      <p className="text-muted-foreground mb-2 text-sm">
+        These become <span className="text-sage font-medium">Your Light</span> — the experiences that fill the space the noise left behind.
+      </p>
+      <p className="text-xs text-muted-foreground mb-6 italic">
+        Select what calls to you. We'll build around it.
       </p>
       <div className="flex flex-wrap gap-3">
         {PASSIONS.map((passion) => {
@@ -196,7 +199,7 @@ const Onboarding = ({ profile, setProfile, onComplete }: OnboardingProps) => {
             disabled={!canAdvance}
             className="flex-1 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 flex items-center justify-center gap-2"
           >
-            {step === 2 ? "Start My Journey" : "Continue"}
+            {step === 2 ? "Enter The Clearing" : "Continue"}
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

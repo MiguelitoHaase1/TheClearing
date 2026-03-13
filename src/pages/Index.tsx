@@ -58,6 +58,7 @@ const Index = () => {
             setEhrConnected(false);
             setActiveTab("home");
           }}
+          onGoToLight={() => setActiveTab("experiences")}
         />
       ) : (
         <Experiences
