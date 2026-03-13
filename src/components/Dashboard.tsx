@@ -145,6 +145,8 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
   const [ehrSource, setEhrSource] = useState<string | null>(null);
   const [newWeight, setNewWeight] = useState("");
   const [showDailyTasks, setShowDailyTasks] = useState(false);
+  const [dailyTaskStep, setDailyTaskStep] = useState(0);
+  const [completedTasks, setCompletedTasks] = useState<Set<number>>(new Set());
 
   const greeting = new Date().getHours() < 12 ? "Good morning"
     : new Date().getHours() < 17 ? "Good afternoon" : "Good evening";
