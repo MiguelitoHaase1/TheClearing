@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from "recharts";
 import type { UserProfile } from "@/pages/Index";
+import FoodNoiseDiary from "@/components/FoodNoiseDiary";
 
 interface DashboardProps {
   profile: UserProfile;
