@@ -16,6 +16,8 @@ interface DashboardProps {
   setEhrConnected: React.Dispatch<React.SetStateAction<boolean>>;
   onRestart: () => void;
   onGoToLight: () => void;
+  weightLog: { date: string; weight: number }[];
+  setWeightLog: React.Dispatch<React.SetStateAction<{ date: string; weight: number }[]>>;
 }
 
 const HEALTH_LABEL: Record<string, string> = {
