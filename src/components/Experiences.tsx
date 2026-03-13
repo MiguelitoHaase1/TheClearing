@@ -209,9 +209,10 @@ const Experiences = ({ profile, spurAnswers, ehrConnected }: ExperiencesProps) =
       {/* Header */}
       <div className="px-6 pt-8 pb-2">
         <div className="max-w-lg mx-auto">
-          <h1 className="text-2xl font-serif font-bold text-foreground">Your Experiences</h1>
+          <p className="text-xs text-sage font-semibold uppercase tracking-wider">Your Light</p>
+          <h1 className="text-2xl font-serif font-bold text-foreground">What emerges when the noise clears</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Describe what you want — we'll build it around your profile.
+            Describe what you want — we'll build it around who you are.
           </p>
         </div>
       </div>
