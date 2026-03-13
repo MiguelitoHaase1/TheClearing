@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Heart, Flame, Sun, RotateCcw, Sparkles, Star,
   ChevronRight, Check, BrainCircuit, Shield, FileHeart,
-  User, Eye, TrendingDown, Plus, Scale,
+  User, Eye, TrendingDown, Plus, Scale, Bell, ChevronDown,
 } from "lucide-react";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from "recharts";
 import type { UserProfile } from "@/pages/Index";
