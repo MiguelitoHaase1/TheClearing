@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { TreePine, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 interface WelcomeProps {
   onStart: () => void;
@@ -7,18 +7,50 @@ interface WelcomeProps {
 
 const Welcome = ({ onStart }: WelcomeProps) => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6">
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden">
+      {/* Background: the clearing itself — dark edges fading to warm light */}
+      <div className="absolute inset-0 bg-background" />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse at 50% 45%, hsl(40 33% 97%) 0%, hsl(40 20% 93%) 50%, hsl(30 15% 82%) 80%, hsl(25 12% 70%) 100%)",
+        }}
+      />
+      {/* Subtle light rays from center */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-40"
+        style={{
+          background: "radial-gradient(ellipse at 50% 40%, hsl(40 50% 95% / 0.8) 0%, transparent 60%)",
+        }}
+      />
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="max-w-md w-full text-center"
+        transition={{ duration: 1, ease: "easeOut" }}
+        className="max-w-md w-full text-center relative z-10"
       >
-        {/* Logo mark */}
+        {/* Logo mark — an opening, a breath, light emerging */}
         <div className="mb-8 flex justify-center">
-          <div className="w-20 h-20 rounded-full bg-sage/10 flex items-center justify-center">
-            <TreePine className="w-10 h-10 text-sage" strokeWidth={1.5} />
-          </div>
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="w-24 h-24 rounded-full relative flex items-center justify-center"
+            style={{
+              background: "radial-gradient(circle, hsl(40 50% 97%) 0%, hsl(40 33% 92%) 40%, hsl(145 32% 42% / 0.15) 70%, hsl(17 62% 60% / 0.1) 100%)",
+              boxShadow: "0 0 40px hsl(40 50% 95% / 0.6), 0 0 80px hsl(40 50% 95% / 0.3)",
+            }}
+          >
+            {/* Inner glow — the clearing */}
+            <div
+              className="w-10 h-10 rounded-full"
+              style={{
+                background: "radial-gradient(circle, hsl(40 60% 98%) 0%, hsl(40 40% 94%) 60%, transparent 100%)",
+                boxShadow: "0 0 20px hsl(40 50% 95% / 0.8)",
+              }}
+            />
+          </motion.div>
         </div>
 
         <h1 className="text-4xl font-serif font-bold text-foreground mb-3 tracking-tight">
@@ -29,13 +61,13 @@ const Welcome = ({ onStart }: WelcomeProps) => {
           Discover your clearing.
         </p>
 
-        <div className="w-12 h-px bg-sage/40 mx-auto my-6" />
+        <div className="w-12 h-px bg-primary/30 mx-auto my-6" />
 
         <p className="text-base text-muted-foreground leading-relaxed mb-4">
-          When the noise about food goes quiet, something opens up — focus, strength, peace. A clearing that was always there.
+          You've been navigating thick, disorienting terrain — the constant noise about food, weight, guilt. Then one day, it goes quiet. And there it is: an opening. Breath. Light.
         </p>
         <p className="text-sm text-muted-foreground leading-relaxed mb-10">
-          Three questions to start. Your <span className="text-primary font-medium">roots</span> ground you. Your <span className="text-sage font-medium">light</span> emerges.
+          Three questions to start. Your <span className="text-primary font-medium">roots</span> are who you've always been. Your <span className="text-sage font-medium">light</span> is what emerges now that there's room.
         </p>
 
         <motion.button
