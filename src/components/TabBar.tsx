@@ -1,4 +1,4 @@
-import { TreePine, Sun } from "lucide-react";
+import { Fingerprint, Sun } from "lucide-react";
 import type { DashboardTab } from "@/pages/Index";
 
 interface TabBarProps {
@@ -16,7 +16,7 @@ const TabBar = ({ activeTab, onTabChange }: TabBarProps) => {
             activeTab === "home" ? "text-primary" : "text-muted-foreground"
           }`}
         >
-          <TreePine className="w-5 h-5" />
+          <Fingerprint className="w-5 h-5" />
           <span className="text-[11px] font-medium">Your Roots</span>
         </button>
         <button
