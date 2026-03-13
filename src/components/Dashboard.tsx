@@ -198,130 +198,148 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
             <h1 className="text-2xl font-serif font-bold text-foreground">{greeting}, {profile.name}</h1>
             <p className="text-sm text-muted-foreground mt-0.5">Who you are under the noise.</p>
           </div>
-          <button onClick={onRestart} className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground" title="Start over">
-            <RotateCcw className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowDailyTasks(!showDailyTasks)}
+              className="relative p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground"
+              title="Daily tasks"
+            >
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />
+            </button>
+            <button onClick={onRestart} className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground" title="Start over">
+              <RotateCcw className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="max-w-lg mx-auto px-6 space-y-5">
 
-        {/* ===== WEIGHT TRACKER ===== */}
-        {profile.currentWeight && (
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-            className="bg-card rounded-2xl border border-primary/20 p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Scale className="w-4 h-4 text-primary" />
-                <span className="text-xs font-semibold text-primary uppercase tracking-wider">Weight Tracker</span>
-              </div>
-              <button onClick={() => setShowWeightInput(!showWeightInput)}
-                className="p-1.5 rounded-lg hover:bg-secondary transition-colors text-primary">
-                <Plus className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Current stats */}
-            <div className="flex items-end gap-6 mb-3">
-              <div>
-                <p className="text-xs text-muted-foreground">Current</p>
-                <p className="text-2xl font-serif font-bold text-foreground">
-                  {weightLog.length > 0 ? weightLog[weightLog.length - 1].weight : profile.currentWeight}
-                  <span className="text-sm font-sans text-muted-foreground ml-1">lbs</span>
-                </p>
-              </div>
-              {profile.goalWeight && (
-                <div>
-                  <p className="text-xs text-muted-foreground">Goal</p>
-                  <p className="text-lg font-serif font-semibold text-muted-foreground">
-                    {profile.goalWeight}
-                    <span className="text-sm font-sans ml-1">lbs</span>
-                  </p>
-                </div>
-              )}
-              {profile.goalWeight && (
-                <div className="ml-auto text-right">
-                  <p className="text-xs text-muted-foreground">To go</p>
-                  <p className="text-lg font-serif font-bold text-primary flex items-center gap-1">
-                    <TrendingDown className="w-4 h-4" />
-                    {Math.max(0, (weightLog.length > 0 ? weightLog[weightLog.length - 1].weight : profile.currentWeight!) - profile.goalWeight)}
-                    <span className="text-sm font-sans text-muted-foreground ml-0.5">lbs</span>
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Mini progress bar to goal */}
-            {profile.goalWeight && profile.currentWeight && (
-              <div className="mb-3">
-                <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full bg-primary rounded-full transition-all duration-500"
-                    style={{
-                      width: `${Math.min(100, Math.max(5, ((profile.currentWeight - (weightLog.length > 0 ? weightLog[weightLog.length - 1].weight : profile.currentWeight)) / (profile.currentWeight - profile.goalWeight)) * 100))}%`
-                    }} />
-                </div>
-              </div>
-            )}
-
-            {/* Recent entries */}
-            {weightLog.length > 0 && (
-              <div className="flex gap-2 overflow-x-auto pb-1 mb-2">
-                {weightLog.slice(-5).map((entry, i) => (
-                  <div key={i} className="flex-shrink-0 px-3 py-1.5 bg-secondary/60 rounded-lg text-center">
-                    <p className="text-[10px] text-muted-foreground">{new Date(entry.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</p>
-                    <p className="text-xs font-semibold text-foreground">{entry.weight}</p>
+        {/* ===== DAILY TASKS (collapsible) ===== */}
+        <AnimatePresence>
+          {showDailyTasks && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="overflow-hidden"
+            >
+              <div className="space-y-4 pb-1">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-primary uppercase tracking-wider">Daily check-ins</span>
                   </div>
-                ))}
-              </div>
-            )}
+                  <button onClick={() => setShowDailyTasks(false)} className="p-1 rounded-md hover:bg-secondary text-muted-foreground">
+                    <ChevronDown className="w-3.5 h-3.5" />
+                  </button>
+                </div>
 
-            {/* Quick log input */}
-            <AnimatePresence>
-              {showWeightInput && (
-                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden">
-                  <div className="flex gap-2 pt-2 border-t border-border mt-2">
-                    <input
-                      type="number"
-                      value={newWeight}
-                      onChange={(e) => setNewWeight(e.target.value)}
-                      placeholder="Today's weight"
-                      className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    />
-                    <button
-                      onClick={() => {
-                        const w = parseFloat(newWeight);
-                        if (w > 0 && w < 1000) {
-                          setWeightLog((prev) => [...prev, { date: new Date().toISOString(), weight: w }]);
-                          setNewWeight("");
-                          setShowWeightInput(false);
-                        }
-                      }}
-                      disabled={!newWeight || parseFloat(newWeight) <= 0}
-                      className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold disabled:opacity-40"
-                    >
-                      Log
-                    </button>
+                {/* Weight Tracker */}
+                {profile.currentWeight && (
+                  <div className="bg-card rounded-2xl border border-primary/20 p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Scale className="w-4 h-4 text-primary" />
+                        <span className="text-xs font-semibold text-primary uppercase tracking-wider">Weight Tracker</span>
+                      </div>
+                      <button onClick={() => setShowWeightInput(!showWeightInput)}
+                        className="p-1.5 rounded-lg hover:bg-secondary transition-colors text-primary">
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="flex items-end gap-6 mb-3">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Current</p>
+                        <p className="text-2xl font-serif font-bold text-foreground">
+                          {weightLog.length > 0 ? weightLog[weightLog.length - 1].weight : profile.currentWeight}
+                          <span className="text-sm font-sans text-muted-foreground ml-1">lbs</span>
+                        </p>
+                      </div>
+                      {profile.goalWeight && (
+                        <div>
+                          <p className="text-xs text-muted-foreground">Goal</p>
+                          <p className="text-lg font-serif font-semibold text-muted-foreground">
+                            {profile.goalWeight}
+                            <span className="text-sm font-sans ml-1">lbs</span>
+                          </p>
+                        </div>
+                      )}
+                      {profile.goalWeight && (
+                        <div className="ml-auto text-right">
+                          <p className="text-xs text-muted-foreground">To go</p>
+                          <p className="text-lg font-serif font-bold text-primary flex items-center gap-1">
+                            <TrendingDown className="w-4 h-4" />
+                            {Math.max(0, (weightLog.length > 0 ? weightLog[weightLog.length - 1].weight : profile.currentWeight!) - profile.goalWeight)}
+                            <span className="text-sm font-sans text-muted-foreground ml-0.5">lbs</span>
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {profile.goalWeight && profile.currentWeight && (
+                      <div className="mb-3">
+                        <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                          <div className="h-full bg-primary rounded-full transition-all duration-500"
+                            style={{
+                              width: `${Math.min(100, Math.max(5, ((profile.currentWeight - (weightLog.length > 0 ? weightLog[weightLog.length - 1].weight : profile.currentWeight)) / (profile.currentWeight - profile.goalWeight)) * 100))}%`
+                            }} />
+                        </div>
+                      </div>
+                    )}
+
+                    {weightLog.length > 0 && (
+                      <div className="flex gap-2 overflow-x-auto pb-1 mb-2">
+                        {weightLog.slice(-5).map((entry, i) => (
+                          <div key={i} className="flex-shrink-0 px-3 py-1.5 bg-secondary/60 rounded-lg text-center">
+                            <p className="text-[10px] text-muted-foreground">{new Date(entry.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</p>
+                            <p className="text-xs font-semibold text-foreground">{entry.weight}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <AnimatePresence>
+                      {showWeightInput && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+                          className="overflow-hidden">
+                          <div className="flex gap-2 pt-2 border-t border-border mt-2">
+                            <input
+                              type="number"
+                              value={newWeight}
+                              onChange={(e) => setNewWeight(e.target.value)}
+                              placeholder="Today's weight"
+                              className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                            />
+                            <button
+                              onClick={() => {
+                                const w = parseFloat(newWeight);
+                                if (w > 0 && w < 1000) {
+                                  setWeightLog((prev) => [...prev, { date: new Date().toISOString(), weight: w }]);
+                                  setNewWeight("");
+                                  setShowWeightInput(false);
+                                }
+                              }}
+                              disabled={!newWeight || parseFloat(newWeight) <= 0}
+                              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold disabled:opacity-40"
+                            >
+                              Log
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        )}
+                )}
 
-        {/* Daily nudge */}
-        {/* Food Noise Diary — paired with weight tracker */}
-        <FoodNoiseDiary profile={profile} spurAnswers={spurAnswers} persona={persona.hasData ? { name: persona.name, description: persona.description } : null} />
-
-        {/* Daily nudge */}
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="bg-card rounded-2xl border border-border p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
-          <div className="flex items-center gap-2 mb-3">
-            <Sun className="w-4 h-4 text-primary" />
-            <span className="text-xs font-semibold text-primary uppercase tracking-wider">Today's nudge</span>
-          </div>
-          <p className="text-foreground text-base leading-relaxed font-serif">{tip}</p>
-        </motion.div>
+                {/* Food Noise Diary */}
+                <FoodNoiseDiary profile={profile} spurAnswers={spurAnswers} persona={persona.hasData ? { name: persona.name, description: persona.description } : null} />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Your Light nudge */}
         <motion.button
