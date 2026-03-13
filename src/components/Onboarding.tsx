@@ -126,8 +126,11 @@ const Onboarding = ({ profile, setProfile, onComplete }: OnboardingProps) => {
       <h2 className="text-2xl font-serif font-bold text-foreground mb-2">
         What are you passionate about?
       </h2>
-      <p className="text-muted-foreground mb-6 text-sm">
-        We weave your passions into your wellness plan.
+      <p className="text-muted-foreground mb-2 text-sm">
+        These become <span className="text-sage font-medium">Your Light</span> — the experiences that fill the space the noise left behind.
+      </p>
+      <p className="text-xs text-muted-foreground mb-6 italic">
+        Select what calls to you. We'll build around it.
       </p>
       <div className="flex flex-wrap gap-3">
         {PASSIONS.map((passion) => {
