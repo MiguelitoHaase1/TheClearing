@@ -132,43 +132,47 @@ const Onboarding = ({ profile, setProfile, onComplete }: OnboardingProps) => {
         {/* Age */}
         <div>
           <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2 block">Age</label>
-          <input
-            type="number"
-            value={profile.age ?? ""}
-            onChange={(e) => setProfile((prev) => ({ ...prev, age: e.target.value ? parseInt(e.target.value) : null }))}
-            placeholder="Your age"
-            className="w-full px-4 py-3 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 text-base"
-            min={13}
-            max={120}
-          />
+          <div className="flex items-center gap-4">
+            <input
+              type="range"
+              min={13}
+              max={90}
+              value={profile.age ?? 30}
+              onChange={(e) => setProfile((prev) => ({ ...prev, age: parseInt(e.target.value) }))}
+              className="flex-1 h-2 bg-secondary rounded-full appearance-none cursor-pointer accent-primary [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary"
+            />
+            <span className="text-lg font-serif font-bold text-foreground w-10 text-right">{profile.age ?? 30}</span>
+          </div>
         </div>
 
         {/* Weight */}
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2 block">Current weight</label>
-            <div className="relative">
+            <div className="flex items-center gap-3">
               <input
-                type="number"
-                value={profile.currentWeight ?? ""}
-                onChange={(e) => setProfile((prev) => ({ ...prev, currentWeight: e.target.value ? parseFloat(e.target.value) : null }))}
-                placeholder="e.g. 185"
-                className="w-full px-4 py-3 pr-12 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 text-base"
+                type="range"
+                min={80}
+                max={400}
+                value={profile.currentWeight ?? 170}
+                onChange={(e) => setProfile((prev) => ({ ...prev, currentWeight: parseInt(e.target.value) }))}
+                className="flex-1 h-2 bg-secondary rounded-full appearance-none cursor-pointer accent-primary [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">lbs</span>
+              <span className="text-sm font-bold text-foreground w-14 text-right">{profile.currentWeight ?? 170}<span className="text-xs text-muted-foreground ml-0.5">lbs</span></span>
             </div>
           </div>
           <div>
             <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2 block">Goal weight</label>
-            <div className="relative">
+            <div className="flex items-center gap-3">
               <input
-                type="number"
-                value={profile.goalWeight ?? ""}
-                onChange={(e) => setProfile((prev) => ({ ...prev, goalWeight: e.target.value ? parseFloat(e.target.value) : null }))}
-                placeholder="e.g. 160"
-                className="w-full px-4 py-3 pr-12 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 text-base"
+                type="range"
+                min={80}
+                max={400}
+                value={profile.goalWeight ?? 150}
+                onChange={(e) => setProfile((prev) => ({ ...prev, goalWeight: parseInt(e.target.value) }))}
+                className="flex-1 h-2 bg-secondary rounded-full appearance-none cursor-pointer accent-primary [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">lbs</span>
+              <span className="text-sm font-bold text-foreground w-14 text-right">{profile.goalWeight ?? 150}<span className="text-xs text-muted-foreground ml-0.5">lbs</span></span>
             </div>
           </div>
         </div>
