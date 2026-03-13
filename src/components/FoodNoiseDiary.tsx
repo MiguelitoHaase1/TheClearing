@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, Send, Loader2, X, Mic } from "lucide-react";
+import { MessageCircle, Send, Loader2, X, Sparkles } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import type { UserProfile } from "@/pages/Index";
 
 interface FoodNoiseDiaryProps {
@@ -13,6 +14,22 @@ type Msg = { role: "user" | "assistant"; content: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/food-noise-chat`;
 
+// Coach archetypes matched to SPUR persona
+const COACH_PROFILES: Record<string, { name: string; style: string; emoji: string }> = {
+  "The Mindful Navigator": { name: "Sage", style: "grounding & intentional", emoji: "🧭" },
+  "The Evidence Seeker": { name: "Lena", style: "clear & evidence-based", emoji: "📊" },
+  "The Community Catalyst": { name: "Maya", style: "warm & connected", emoji: "🤝" },
+  "The Practical Builder": { name: "Kit", style: "practical & action-oriented", emoji: "🔧" },
+  "The Strategic Visionary": { name: "Sage", style: "focused & precise", emoji: "🎯" },
+  "The Heart-Led Leader": { name: "Maya", style: "purposeful & empathetic", emoji: "💛" },
+  "The Systems Thinker": { name: "Lena", style: "structured & insightful", emoji: "🧩" },
+  "The Adaptive Connector": { name: "Kit", style: "flexible & supportive", emoji: "🌊" },
+  "The Determined Doer": { name: "Kit", style: "driven & encouraging", emoji: "⚡" },
+  "The Informed Advocate": { name: "Lena", style: "knowledgeable & compassionate", emoji: "🌿" },
+};
+
+const DEFAULT_COACH = { name: "Haven", style: "gentle & curious", emoji: "✨" };
+
 const FoodNoiseDiary = ({ profile, spurAnswers, persona }: FoodNoiseDiaryProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -20,6 +37,13 @@ const FoodNoiseDiary = ({ profile, spurAnswers, persona }: FoodNoiseDiaryProps) 
   const [isLoading, setIsLoading] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const coach = useMemo(() => {
+    if (persona?.name && COACH_PROFILES[persona.name]) {
+      return COACH_PROFILES[persona.name];
+    }
+    return DEFAULT_COACH;
+  }, [persona]);
 
   const scrollToBottom = () => {
     setTimeout(() => {
@@ -47,6 +71,7 @@ const FoodNoiseDiary = ({ profile, spurAnswers, persona }: FoodNoiseDiaryProps) 
           profile,
           spurAnswers,
           persona,
+          coach,
         }),
       });
 
@@ -104,7 +129,7 @@ const FoodNoiseDiary = ({ profile, spurAnswers, persona }: FoodNoiseDiaryProps) 
     } finally {
       setIsLoading(false);
     }
-  }, [profile, spurAnswers, persona]);
+  }, [profile, spurAnswers, persona, coach]);
 
   const startConversation = useCallback(() => {
     setHasStarted(true);
@@ -142,20 +167,38 @@ const FoodNoiseDiary = ({ profile, spurAnswers, persona }: FoodNoiseDiaryProps) 
           <MessageCircle className="w-4 h-4 text-sage" />
           <span className="text-xs font-semibold text-sage uppercase tracking-wider">Food Noise Diary</span>
         </div>
+
+        {/* Coach intro */}
+        <div className="flex items-center gap-3 mb-3 p-3 bg-sage/8 rounded-xl border border-sage/15">
+          <div className="w-10 h-10 rounded-full bg-sage/15 flex items-center justify-center flex-shrink-0 text-lg">
+            {coach.emoji}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-serif font-bold text-foreground">{coach.name}</p>
+            <p className="text-[11px] text-muted-foreground leading-snug">
+              {persona?.name
+                ? <>Your coach — selected for your <span className="text-sage font-medium">{persona.name}</span> persona. {coach.style} approach.</>
+                : <>Your personal coach — {coach.style} approach. Matched to you as your persona deepens.</>
+              }
+            </p>
+          </div>
+          <Sparkles className="w-3.5 h-3.5 text-sage flex-shrink-0" />
+        </div>
+
         <h3 className="text-base font-serif font-bold text-foreground mb-1.5">
-          {hasStarted ? "Continue today's check-in" : "Your daily 5-minute check-in"}
+          {hasStarted ? `Pick up with ${coach.name}` : "Your daily 5-minute check-in"}
         </h3>
         <p className="text-sm text-muted-foreground leading-relaxed mb-4">
           {hasStarted
-            ? "Your coach is here whenever you're ready to pick back up."
-            : "A quiet conversation about what's shifting inside. Your AI coach listens, reflects, and helps you notice the clearing."}
+            ? `${coach.name} is here whenever you're ready to continue.`
+            : `${coach.name} will guide you through a quiet conversation about what's shifting inside — listening, reflecting, and helping you notice the clearing.`}
         </p>
         <button
           onClick={hasStarted ? () => setIsOpen(true) : startConversation}
           className="w-full py-3 bg-sage text-accent-foreground rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
         >
-          <Mic className="w-4 h-4" />
-          {hasStarted ? "Resume conversation" : "Start today's diary"}
+          <MessageCircle className="w-4 h-4" />
+          {hasStarted ? `Resume with ${coach.name}` : `Start with ${coach.name}`}
         </button>
       </motion.div>
     );
@@ -170,13 +213,13 @@ const FoodNoiseDiary = ({ profile, spurAnswers, persona }: FoodNoiseDiaryProps) 
     >
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-3 border-b border-border">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-full bg-sage/15 flex items-center justify-center">
-            <MessageCircle className="w-3.5 h-3.5 text-sage" />
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-sage/15 flex items-center justify-center text-sm">
+            {coach.emoji}
           </div>
           <div>
-            <p className="text-xs font-semibold text-foreground">Food Noise Diary</p>
-            <p className="text-[10px] text-muted-foreground">Your daily check-in</p>
+            <p className="text-xs font-semibold text-foreground">{coach.name}</p>
+            <p className="text-[10px] text-muted-foreground">{coach.style} coach</p>
           </div>
         </div>
         <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground">
@@ -201,7 +244,13 @@ const FoodNoiseDiary = ({ profile, spurAnswers, persona }: FoodNoiseDiaryProps) 
                     : "bg-sage/10 text-foreground rounded-bl-md"
                 }`}
               >
-                {msg.content}
+                {msg.role === "assistant" ? (
+                  <div className="prose prose-sm max-w-none [&>p]:m-0">
+                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  </div>
+                ) : (
+                  msg.content
+                )}
               </div>
             </motion.div>
           ))}
@@ -222,7 +271,7 @@ const FoodNoiseDiary = ({ profile, spurAnswers, persona }: FoodNoiseDiaryProps) 
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Share what's on your mind..."
+            placeholder={`Talk to ${coach.name}...`}
             className="flex-1 px-3 py-2.5 bg-background border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-sage/30"
             disabled={isLoading}
           />
