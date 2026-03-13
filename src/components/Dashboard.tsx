@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from "recharts";
 import type { UserProfile } from "@/pages/Index";
+import FoodNoiseDiary from "@/components/FoodNoiseDiary";
 
 interface DashboardProps {
   profile: UserProfile;
@@ -305,6 +306,10 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
             </AnimatePresence>
           </motion.div>
         )}
+
+        {/* Daily nudge */}
+        {/* Food Noise Diary — paired with weight tracker */}
+        <FoodNoiseDiary profile={profile} spurAnswers={spurAnswers} persona={persona.hasData ? { name: persona.name, description: persona.description } : null} />
 
         {/* Daily nudge */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
