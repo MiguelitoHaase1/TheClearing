@@ -137,7 +137,193 @@ function getRadarData(
   ];
 }
 
-const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrConnected, onRestart, onGoToLight, weightLog, setWeightLog }: DashboardProps) => {
+interface DailyTasksModalProps {
+  profile: UserProfile;
+  currentWeight: number;
+  newWeight: string;
+  setNewWeight: (v: string) => void;
+  setWeightLog: React.Dispatch<React.SetStateAction<{ date: string; weight: number }[]>>;
+  spurAnswers: Record<string, number>;
+  persona: { name: string; description: string; hasData: boolean };
+  dailyTaskStep: number;
+  setDailyTaskStep: (v: number) => void;
+  completedTasks: Set<number>;
+  setCompletedTasks: React.Dispatch<React.SetStateAction<Set<number>>>;
+  onClose: () => void;
+  onGoToLight: () => void;
+}
+
+const DailyTasksModal = ({
+  profile, currentWeight, newWeight, setNewWeight, setWeightLog,
+  spurAnswers, persona, dailyTaskStep, setDailyTaskStep,
+  completedTasks, setCompletedTasks, onClose, onGoToLight,
+}: DailyTasksModalProps) => {
+  const taskCards = [
+    ...(profile.currentWeight ? ["weight"] : []),
+    "diary",
+    "light",
+  ];
+  const totalCards = taskCards.length;
+  const currentCard = taskCards[dailyTaskStep] || taskCards[0];
+  const completedCount = completedTasks.size;
+
+  const goNext = () => {
+    if (dailyTaskStep < totalCards - 1) {
+      setDailyTaskStep(dailyTaskStep + 1);
+    } else {
+      onClose();
+    }
+  };
+
+  const markDoneAndNext = (idx: number) => {
+    setCompletedTasks((prev) => new Set(prev).add(idx));
+    goNext();
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ type: "spring", damping: 28, stiffness: 300 }}
+        className="absolute bottom-0 left-0 right-0 bg-background rounded-t-3xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Handle + header */}
+        <div className="pt-3 pb-3 px-6 border-b border-border">
+          <div className="w-10 h-1 bg-border rounded-full mx-auto mb-3" />
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Bell className="w-4 h-4 text-primary" />
+              <span className="text-sm font-semibold text-foreground">Daily check-ins</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-muted-foreground">{completedCount}/{totalCards} done</span>
+              <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+          {/* Progress dots */}
+          <div className="flex gap-2">
+            {taskCards.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setDailyTaskStep(i)}
+                className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                  completedTasks.has(i)
+                    ? "bg-primary"
+                    : i === dailyTaskStep
+                    ? "bg-primary/50"
+                    : "bg-border"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Card content */}
+        <div className="px-6 py-5 overflow-y-auto max-h-[70vh]">
+          <AnimatePresence mode="wait">
+            {currentCard === "weight" && (
+              <motion.div key="weight" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.25 }}>
+                <div className="bg-card rounded-2xl border border-border p-5" style={{ boxShadow: "var(--shadow-card)" }}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Scale className="w-4 h-4 text-primary" />
+                    <span className="text-xs font-semibold text-primary uppercase tracking-wider">Weight check-in</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-4">Slide to set today's weight</p>
+                  <div className="flex items-center gap-3 mb-5">
+                    <input
+                      type="range"
+                      min={Math.max(80, currentWeight - 20)}
+                      max={currentWeight + 10}
+                      step={0.5}
+                      value={newWeight || currentWeight}
+                      onChange={(e) => setNewWeight(e.target.value)}
+                      className="flex-1 h-2 bg-secondary rounded-full appearance-none cursor-pointer accent-primary [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary"
+                    />
+                    <span className="text-2xl font-serif font-bold text-foreground w-20 text-right">
+                      {newWeight || currentWeight}
+                      <span className="text-xs text-muted-foreground ml-0.5">lbs</span>
+                    </span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        const w = parseFloat(newWeight || String(currentWeight));
+                        if (w > 0 && w < 1000) {
+                          setWeightLog((prev) => [...prev, { date: new Date().toISOString(), weight: w }]);
+                          setNewWeight("");
+                        }
+                        markDoneAndNext(dailyTaskStep);
+                      }}
+                      className="flex-1 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                    >
+                      <Check className="w-4 h-4" /> Log & continue
+                    </button>
+                    <button onClick={goNext} className="px-4 py-3 rounded-xl border border-border text-sm text-muted-foreground hover:bg-secondary transition-colors">
+                      Skip
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {currentCard === "diary" && (
+              <motion.div key="diary" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.25 }}>
+                <FoodNoiseDiary profile={profile} spurAnswers={spurAnswers} persona={persona.hasData ? { name: persona.name, description: persona.description } : null} />
+                <div className="flex gap-2 mt-3">
+                  <button onClick={() => markDoneAndNext(dailyTaskStep)} className="flex-1 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                    <Check className="w-4 h-4" /> Done
+                  </button>
+                  <button onClick={goNext} className="px-4 py-3 rounded-xl border border-border text-sm text-muted-foreground hover:bg-secondary transition-colors">
+                    Skip
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {currentCard === "light" && (
+              <motion.div key="light" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.25 }}>
+                <div className="bg-sage/10 rounded-2xl border border-sage/25 p-6 text-center" style={{ boxShadow: "var(--shadow-card)" }}>
+                  <div className="w-14 h-14 rounded-full bg-sage/15 flex items-center justify-center mx-auto mb-4">
+                    <Sun className="w-7 h-7 text-sage" />
+                  </div>
+                  <p className="text-xs text-sage font-semibold uppercase tracking-wider mb-1">Your Light</p>
+                  <h3 className="text-lg font-serif font-bold text-foreground mb-2">The noise is clearing.</h3>
+                  <p className="text-sm text-muted-foreground mb-5">What will you fill the space with? Explore experiences built around your passions.</p>
+                  <button
+                    onClick={() => { markDoneAndNext(dailyTaskStep); onGoToLight(); }}
+                    className="w-full py-3 bg-sage text-accent-foreground rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                  >
+                    Explore Your Light <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {completedCount >= totalCards - 1 && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-4 text-center">
+                    <p className="text-xs text-primary font-semibold">✨ All check-ins complete for today!</p>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+
   const [showSpur, setShowSpur] = useState(false);
   const [sessionAnswered, setSessionAnswered] = useState(0);
   const [sessionDone, setSessionDone] = useState(false);
