@@ -136,7 +136,7 @@ function getRadarData(
   ];
 }
 
-const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrConnected, onRestart }: DashboardProps) => {
+const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrConnected, onRestart, onGoToLight }: DashboardProps) => {
   const [showSpur, setShowSpur] = useState(false);
   const [sessionAnswered, setSessionAnswered] = useState(0);
   const [sessionDone, setSessionDone] = useState(false);
