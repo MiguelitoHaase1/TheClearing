@@ -22,8 +22,9 @@ interface DashboardProps {
 }
 
 const HEALTH_LABEL: Record<string, string> = {
-  weight: "Weight management", energy: "Energy", sleep: "Sleep",
-  strength: "Strength", mental: "Mental clarity", nutrition: "Nutrition",
+  energy: "Energy", confidence: "Confidence", mobility: "Move freely",
+  sleep: "Sleep", mental: "Mental clarity", presence: "Being present",
+  longevity: "Longevity", nutrition: "Food relationship",
 };
 const PASSION_LABEL: Record<string, string> = {
   cooking: "Cooking", outdoors: "Outdoors", reading: "Reading",
