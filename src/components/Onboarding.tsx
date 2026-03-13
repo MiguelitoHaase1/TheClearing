@@ -30,6 +30,13 @@ const PASSIONS = [
   { id: "meditation", label: "Meditation", emoji: "🧘" },
 ];
 
+const GENDER_OPTIONS = [
+  { id: "female", label: "Female" },
+  { id: "male", label: "Male" },
+  { id: "nonbinary", label: "Non-binary" },
+  { id: "prefer-not", label: "Prefer not to say" },
+];
+
 const Onboarding = ({ profile, setProfile, onComplete }: OnboardingProps) => {
   const [step, setStep] = useState(0);
 
@@ -45,10 +52,14 @@ const Onboarding = ({ profile, setProfile, onComplete }: OnboardingProps) => {
     }));
   };
 
+  const TOTAL_STEPS = 4;
+
   const canAdvance =
     step === 0
       ? profile.name.trim().length > 0
       : step === 1
+      ? profile.gender !== "" && profile.age !== null && profile.age > 0
+      : step === 2
       ? profile.healthGoals.length > 0
       : profile.passions.length > 0;
 
@@ -65,7 +76,7 @@ const Onboarding = ({ profile, setProfile, onComplete }: OnboardingProps) => {
         What should we call you?
       </h2>
       <p className="text-muted-foreground mb-8 text-sm">
-        We'll personalize your experience around your name.
+        We'll personalize your clearing around your name.
       </p>
       <input
         type="text"
@@ -79,7 +90,91 @@ const Onboarding = ({ profile, setProfile, onComplete }: OnboardingProps) => {
       />
     </motion.div>,
 
-    // Step 1: Health goals
+    // Step 1: Biometrics (gender, age, weight, goal)
+    <motion.div
+      key="biometrics"
+      initial={{ opacity: 0, x: 30 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -30 }}
+      transition={{ duration: 0.3 }}
+    >
+      <h2 className="text-2xl font-serif font-bold text-foreground mb-2">
+        A little about you
+      </h2>
+      <p className="text-muted-foreground mb-6 text-sm">
+        This helps us ground <span className="text-primary font-medium">your roots</span>. All optional except gender and age.
+      </p>
+
+      <div className="space-y-5">
+        {/* Gender */}
+        <div>
+          <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2 block">Gender</label>
+          <div className="grid grid-cols-2 gap-2">
+            {GENDER_OPTIONS.map((g) => (
+              <button
+                key={g.id}
+                onClick={() => setProfile((prev) => ({ ...prev, gender: g.id }))}
+                className={`px-3 py-2.5 rounded-xl border text-sm font-medium transition-all ${
+                  profile.gender === g.id
+                    ? "bg-primary/10 border-primary text-foreground"
+                    : "bg-card border-border text-foreground hover:border-primary/40"
+                }`}
+              >
+                {g.label}
+                {profile.gender === g.id && <Check className="w-3.5 h-3.5 text-primary inline ml-1.5" />}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Age */}
+        <div>
+          <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2 block">Age</label>
+          <input
+            type="number"
+            value={profile.age ?? ""}
+            onChange={(e) => setProfile((prev) => ({ ...prev, age: e.target.value ? parseInt(e.target.value) : null }))}
+            placeholder="Your age"
+            className="w-full px-4 py-3 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 text-base"
+            min={13}
+            max={120}
+          />
+        </div>
+
+        {/* Weight */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2 block">Current weight</label>
+            <div className="relative">
+              <input
+                type="number"
+                value={profile.currentWeight ?? ""}
+                onChange={(e) => setProfile((prev) => ({ ...prev, currentWeight: e.target.value ? parseFloat(e.target.value) : null }))}
+                placeholder="e.g. 185"
+                className="w-full px-4 py-3 pr-12 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 text-base"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">lbs</span>
+            </div>
+          </div>
+          <div>
+            <label className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2 block">Goal weight</label>
+            <div className="relative">
+              <input
+                type="number"
+                value={profile.goalWeight ?? ""}
+                onChange={(e) => setProfile((prev) => ({ ...prev, goalWeight: e.target.value ? parseFloat(e.target.value) : null }))}
+                placeholder="e.g. 160"
+                className="w-full px-4 py-3 pr-12 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 text-base"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">lbs</span>
+            </div>
+          </div>
+        </div>
+        <p className="text-[10px] text-muted-foreground italic">Weight fields are optional. You can always add this later.</p>
+      </div>
+    </motion.div>,
+
+    // Step 2: Health goals
     <motion.div
       key="health"
       initial={{ opacity: 0, x: 30 }}
@@ -115,7 +210,7 @@ const Onboarding = ({ profile, setProfile, onComplete }: OnboardingProps) => {
       </div>
     </motion.div>,
 
-    // Step 2: Passions
+    // Step 3: Passions
     <motion.div
       key="passions"
       initial={{ opacity: 0, x: 30 }}
@@ -159,7 +254,7 @@ const Onboarding = ({ profile, setProfile, onComplete }: OnboardingProps) => {
       {/* Progress */}
       <div className="px-6 pt-6">
         <div className="max-w-md mx-auto flex gap-2">
-          {[0, 1, 2].map((i) => (
+          {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
             <div
               key={i}
               className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
@@ -169,7 +264,7 @@ const Onboarding = ({ profile, setProfile, onComplete }: OnboardingProps) => {
           ))}
         </div>
         <p className="text-xs text-muted-foreground text-center mt-3">
-          Step {step + 1} of 3
+          Step {step + 1} of {TOTAL_STEPS}
         </p>
       </div>
 
@@ -193,13 +288,13 @@ const Onboarding = ({ profile, setProfile, onComplete }: OnboardingProps) => {
           )}
           <button
             onClick={() => {
-              if (step < 2) setStep(step + 1);
+              if (step < TOTAL_STEPS - 1) setStep(step + 1);
               else onComplete();
             }}
             disabled={!canAdvance}
             className="flex-1 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 flex items-center justify-center gap-2"
           >
-            {step === 2 ? "Enter The Clearing" : "Continue"}
+            {step === TOTAL_STEPS - 1 ? "Enter The Clearing" : "Continue"}
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
