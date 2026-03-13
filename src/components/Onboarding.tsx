@@ -10,12 +10,14 @@ interface OnboardingProps {
 }
 
 const HEALTH_GOALS = [
-  { id: "weight", label: "Weight management", emoji: "⚖️" },
   { id: "energy", label: "More energy", emoji: "⚡" },
+  { id: "confidence", label: "Feel confident in my body", emoji: "✨" },
+  { id: "mobility", label: "Move freely again", emoji: "🏃" },
   { id: "sleep", label: "Better sleep", emoji: "😴" },
-  { id: "strength", label: "Build strength", emoji: "💪" },
   { id: "mental", label: "Mental clarity", emoji: "🧠" },
-  { id: "nutrition", label: "Better nutrition", emoji: "🥗" },
+  { id: "presence", label: "Be present with people I love", emoji: "💛" },
+  { id: "longevity", label: "Live longer, live better", emoji: "🌿" },
+  { id: "nutrition", label: "A healthier relationship with food", emoji: "🍽️" },
 ];
 
 const PASSIONS = [
