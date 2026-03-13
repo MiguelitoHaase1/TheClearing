@@ -308,6 +308,10 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
         )}
 
         {/* Daily nudge */}
+        {/* Food Noise Diary — paired with weight tracker */}
+        <FoodNoiseDiary profile={profile} spurAnswers={spurAnswers} persona={persona.hasData ? { name: persona.name, description: persona.description } : null} />
+
+        {/* Daily nudge */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="bg-card rounded-2xl border border-border p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
           <div className="flex items-center gap-2 mb-3">
