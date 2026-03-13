@@ -12,6 +12,10 @@ export interface UserProfile {
   name: string;
   healthGoals: string[];
   passions: string[];
+  currentWeight: number | null;
+  goalWeight: number | null;
+  gender: string;
+  age: number | null;
 }
 
 const Index = () => {
@@ -21,7 +25,12 @@ const Index = () => {
     name: "",
     healthGoals: [],
     passions: [],
+    currentWeight: null,
+    goalWeight: null,
+    gender: "",
+    age: null,
   });
+  const [weightLog, setWeightLog] = useState<{ date: string; weight: number }[]>([]);
   const [spurAnswers, setSpurAnswers] = useState<Record<string, number>>({});
   const [ehrConnected, setEhrConnected] = useState(false);
 
@@ -53,12 +62,15 @@ const Index = () => {
           setEhrConnected={setEhrConnected}
           onRestart={() => {
             setScreen("welcome");
-            setProfile({ name: "", healthGoals: [], passions: [] });
+            setProfile({ name: "", healthGoals: [], passions: [], currentWeight: null, goalWeight: null, gender: "", age: null });
             setSpurAnswers({});
             setEhrConnected(false);
             setActiveTab("home");
+            setWeightLog([]);
           }}
           onGoToLight={() => setActiveTab("experiences")}
+          weightLog={weightLog}
+          setWeightLog={setWeightLog}
         />
       ) : (
         <Experiences
