@@ -275,101 +275,24 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
           </motion.div>
         )}
 
-        {/* ===== NOTIFICATION MODAL OVERLAY ===== */}
+        {/* ===== NOTIFICATION MODAL — Card Stepper ===== */}
         <AnimatePresence>
           {showDailyTasks && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm"
-              onClick={() => setShowDailyTasks(false)}
-            >
-              <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "100%" }}
-                transition={{ type: "spring", damping: 28, stiffness: 300 }}
-                className="absolute bottom-0 left-0 right-0 max-h-[85vh] bg-background rounded-t-3xl overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Modal handle + header */}
-                <div className="sticky top-0 bg-background z-10 pt-3 pb-2 px-6 border-b border-border">
-                  <div className="w-10 h-1 bg-border rounded-full mx-auto mb-3" />
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Bell className="w-4 h-4 text-primary" />
-                      <span className="text-sm font-semibold text-foreground">Daily check-ins</span>
-                    </div>
-                    <button onClick={() => setShowDailyTasks(false)} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground">
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Modal content */}
-                <div className="overflow-y-auto max-h-[calc(85vh-60px)] px-6 py-5 space-y-4">
-                  {/* Quick Weight Log with slider */}
-                  {profile.currentWeight && (
-                    <div className="bg-card rounded-2xl border border-border p-4" style={{ boxShadow: "var(--shadow-card)" }}>
-                      <div className="flex items-center gap-2 mb-3">
-                        <Scale className="w-3.5 h-3.5 text-primary" />
-                        <span className="text-xs font-semibold text-foreground">Log today's weight</span>
-                      </div>
-                      <div className="flex items-center gap-3 mb-3">
-                        <input
-                          type="range"
-                          min={Math.max(80, currentWeight - 20)}
-                          max={currentWeight + 10}
-                          step={0.5}
-                          value={newWeight || currentWeight}
-                          onChange={(e) => setNewWeight(e.target.value)}
-                          className="flex-1 h-2 bg-secondary rounded-full appearance-none cursor-pointer accent-primary [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary"
-                        />
-                        <span className="text-lg font-serif font-bold text-foreground w-16 text-right">
-                          {newWeight || currentWeight}
-                          <span className="text-xs text-muted-foreground ml-0.5">lbs</span>
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => {
-                          const w = parseFloat(newWeight || String(currentWeight));
-                          if (w > 0 && w < 1000) {
-                            setWeightLog((prev) => [...prev, { date: new Date().toISOString(), weight: w }]);
-                            setNewWeight("");
-                          }
-                        }}
-                        className="w-full py-2 bg-primary text-primary-foreground rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity"
-                      >
-                        Log weight
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Food Noise Diary */}
-                  <FoodNoiseDiary profile={profile} spurAnswers={spurAnswers} persona={persona.hasData ? { name: persona.name, description: persona.description } : null} />
-
-                  {/* Your Light nudge */}
-                  <button
-                    onClick={() => { setShowDailyTasks(false); onGoToLight(); }}
-                    className="w-full bg-sage/10 rounded-2xl border border-sage/25 p-5 text-left group hover:border-sage/40 transition-all"
-                    style={{ boxShadow: "var(--shadow-card)" }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-sage/15 flex items-center justify-center flex-shrink-0">
-                        <Sun className="w-5 h-5 text-sage" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs text-sage font-semibold uppercase tracking-wider mb-0.5">Your Light</p>
-                        <p className="text-sm font-serif font-semibold text-foreground">The noise is clearing. What will you fill the space with?</p>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-sage group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
-                    </div>
-                  </button>
-                </div>
-              </motion.div>
-            </motion.div>
+            <DailyTasksModal
+              profile={profile}
+              currentWeight={currentWeight}
+              newWeight={newWeight}
+              setNewWeight={setNewWeight}
+              setWeightLog={setWeightLog}
+              spurAnswers={spurAnswers}
+              persona={persona}
+              dailyTaskStep={dailyTaskStep}
+              setDailyTaskStep={setDailyTaskStep}
+              completedTasks={completedTasks}
+              setCompletedTasks={setCompletedTasks}
+              onClose={() => { setShowDailyTasks(false); setDailyTaskStep(0); }}
+              onGoToLight={() => { setShowDailyTasks(false); setDailyTaskStep(0); onGoToLight(); }}
+            />
           )}
         </AnimatePresence>
 
