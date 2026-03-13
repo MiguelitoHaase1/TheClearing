@@ -12,6 +12,10 @@ export interface UserProfile {
   name: string;
   healthGoals: string[];
   passions: string[];
+  currentWeight: number | null;
+  goalWeight: number | null;
+  gender: string;
+  age: number | null;
 }
 
 const Index = () => {
