@@ -1,4 +1,4 @@
-import { Home, Wand2 } from "lucide-react";
+import { TreePine, Sun } from "lucide-react";
 import type { DashboardTab } from "@/pages/Index";
 
 interface TabBarProps {
@@ -16,17 +16,17 @@ const TabBar = ({ activeTab, onTabChange }: TabBarProps) => {
             activeTab === "home" ? "text-primary" : "text-muted-foreground"
           }`}
         >
-          <Home className="w-5 h-5" />
-          <span className="text-[11px] font-medium">Home</span>
+          <TreePine className="w-5 h-5" />
+          <span className="text-[11px] font-medium">Your Roots</span>
         </button>
         <button
           onClick={() => onTabChange("experiences")}
           className={`flex-1 flex flex-col items-center gap-1 py-3 transition-colors ${
-            activeTab === "experiences" ? "text-primary" : "text-muted-foreground"
+            activeTab === "experiences" ? "text-sage" : "text-muted-foreground"
           }`}
         >
-          <Wand2 className="w-5 h-5" />
-          <span className="text-[11px] font-medium">Experiences</span>
+          <Sun className="w-5 h-5" />
+          <span className="text-[11px] font-medium">Your Light</span>
         </button>
       </div>
     </div>

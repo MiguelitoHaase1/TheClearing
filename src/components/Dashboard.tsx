@@ -502,7 +502,7 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
         {/* Footer */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-center pt-4 pb-8">
           <p className="text-xs text-muted-foreground italic font-serif">
-            Your health and your passions dictate your app experience.
+            Your roots ground you. The clearing was always there.
           </p>
         </motion.div>
       </div>
