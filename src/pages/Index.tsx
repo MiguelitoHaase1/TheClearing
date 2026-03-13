@@ -25,7 +25,12 @@ const Index = () => {
     name: "",
     healthGoals: [],
     passions: [],
+    currentWeight: null,
+    goalWeight: null,
+    gender: "",
+    age: null,
   });
+  const [weightLog, setWeightLog] = useState<{ date: string; weight: number }[]>([]);
   const [spurAnswers, setSpurAnswers] = useState<Record<string, number>>({});
   const [ehrConnected, setEhrConnected] = useState(false);
 
