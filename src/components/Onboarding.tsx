@@ -199,7 +199,7 @@ const Onboarding = ({ profile, setProfile, onComplete }: OnboardingProps) => {
             disabled={!canAdvance}
             className="flex-1 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-90 flex items-center justify-center gap-2"
           >
-            {step === 2 ? "Start My Journey" : "Continue"}
+            {step === 2 ? "Enter The Clearing" : "Continue"}
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
