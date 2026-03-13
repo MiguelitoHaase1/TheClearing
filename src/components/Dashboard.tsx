@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Heart, Flame, Sun, RotateCcw, Sparkles, Star,
   ChevronRight, Check, BrainCircuit, Shield, FileHeart,
-  User, Eye, TrendingDown, Plus, Scale, Bell, ChevronDown,
+  User, Eye, TrendingDown, Scale, Bell, ChevronDown,
 } from "lucide-react";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from "recharts";
 import type { UserProfile } from "@/pages/Index";
@@ -68,7 +68,6 @@ const EHR_SOURCES = [
   { id: "manual", name: "Enter manually", icon: "📝" },
 ];
 
-// Persona generation
 const PERSONA_ARCHETYPES: { name: string; adjective: string; description: string; dominant: string }[] = [
   { name: "The Mindful Navigator", adjective: "Intentional", dominant: "Psychological", description: "You lead with purpose. Every choice is deliberate, every plan meaningful. You don't drift — you steer." },
   { name: "The Evidence Seeker", adjective: "Analytical", dominant: "Rational", description: "You want proof, not promises. Data drives your decisions and you trust what you can measure." },
@@ -99,12 +98,10 @@ function computePersona(spurAnswers: Record<string, number>) {
     avgScores[dim] = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
   }
 
-  // Sort dimensions by score
   const sorted = Object.entries(avgScores).sort((a, b) => b[1] - a[1]);
   const top = sorted[0];
   const second = sorted[1];
 
-  // If we have enough data, try blended persona
   if (top[1] > 0 && second[1] > 0 && Math.abs(top[1] - second[1]) < 1.5) {
     const comboKey = [top[0], second[0]].sort().join("+");
     const blended = BLENDED_PERSONAS.find((p) => p.combo === comboKey);
@@ -146,15 +143,11 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
   const [sessionDone, setSessionDone] = useState(false);
   const [showEhr, setShowEhr] = useState(false);
   const [ehrSource, setEhrSource] = useState<string | null>(null);
-  const [showWeightInput, setShowWeightInput] = useState(false);
   const [newWeight, setNewWeight] = useState("");
   const [showDailyTasks, setShowDailyTasks] = useState(false);
 
   const greeting = new Date().getHours() < 12 ? "Good morning"
     : new Date().getHours() < 17 ? "Good afternoon" : "Good evening";
-
-  const primaryGoal = profile.healthGoals[0] || "energy";
-  const tip = DAILY_TIPS[primaryGoal] || DAILY_TIPS.energy;
 
   const answeredCount = Object.keys(spurAnswers || {}).length;
   const totalQuestions = SPUR_QUESTIONS.length;
@@ -188,6 +181,8 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
     setShowSpur(true);
   };
 
+  const currentWeight = weightLog.length > 0 ? weightLog[weightLog.length - 1].weight : profile.currentWeight!;
+
   return (
     <div className="min-h-screen pb-24">
       {/* Header */}
@@ -216,7 +211,69 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
 
       <div className="max-w-lg mx-auto px-6 space-y-5">
 
-        {/* ===== DAILY TASKS (collapsible) ===== */}
+        {/* ===== WEIGHT TRACKER (always visible at top of roots) ===== */}
+        {profile.currentWeight && (
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+            className="bg-card rounded-2xl border border-primary/20 p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
+            <div className="flex items-center gap-2 mb-3">
+              <Scale className="w-4 h-4 text-primary" />
+              <span className="text-xs font-semibold text-primary uppercase tracking-wider">Weight Tracker</span>
+            </div>
+
+            <div className="flex items-end gap-6 mb-3">
+              <div>
+                <p className="text-xs text-muted-foreground">Current</p>
+                <p className="text-2xl font-serif font-bold text-foreground">
+                  {currentWeight}
+                  <span className="text-sm font-sans text-muted-foreground ml-1">lbs</span>
+                </p>
+              </div>
+              {profile.goalWeight && (
+                <div>
+                  <p className="text-xs text-muted-foreground">Goal</p>
+                  <p className="text-lg font-serif font-semibold text-muted-foreground">
+                    {profile.goalWeight}
+                    <span className="text-sm font-sans ml-1">lbs</span>
+                  </p>
+                </div>
+              )}
+              {profile.goalWeight && (
+                <div className="ml-auto text-right">
+                  <p className="text-xs text-muted-foreground">To go</p>
+                  <p className="text-lg font-serif font-bold text-primary flex items-center gap-1">
+                    <TrendingDown className="w-4 h-4" />
+                    {Math.max(0, currentWeight - profile.goalWeight)}
+                    <span className="text-sm font-sans text-muted-foreground ml-0.5">lbs</span>
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {profile.goalWeight && profile.currentWeight && (
+              <div className="mb-3">
+                <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                  <div className="h-full bg-primary rounded-full transition-all duration-500"
+                    style={{
+                      width: `${Math.min(100, Math.max(5, ((profile.currentWeight - currentWeight) / (profile.currentWeight - profile.goalWeight)) * 100))}%`
+                    }} />
+                </div>
+              </div>
+            )}
+
+            {weightLog.length > 0 && (
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {weightLog.slice(-5).map((entry, i) => (
+                  <div key={i} className="flex-shrink-0 px-3 py-1.5 bg-secondary/60 rounded-lg text-center">
+                    <p className="text-[10px] text-muted-foreground">{new Date(entry.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</p>
+                    <p className="text-xs font-semibold text-foreground">{entry.weight}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* ===== DAILY TASKS (collapsible via notification bell) ===== */}
         <AnimatePresence>
           {showDailyTasks && (
             <motion.div
@@ -228,109 +285,46 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
             >
               <div className="space-y-4 pb-1">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-primary uppercase tracking-wider">Daily check-ins</span>
-                  </div>
+                  <span className="text-xs font-semibold text-primary uppercase tracking-wider">Daily check-ins</span>
                   <button onClick={() => setShowDailyTasks(false)} className="p-1 rounded-md hover:bg-secondary text-muted-foreground">
                     <ChevronDown className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                {/* Weight Tracker */}
+                {/* Quick Weight Log with slider */}
                 {profile.currentWeight && (
-                  <div className="bg-card rounded-2xl border border-primary/20 p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <Scale className="w-4 h-4 text-primary" />
-                        <span className="text-xs font-semibold text-primary uppercase tracking-wider">Weight Tracker</span>
-                      </div>
-                      <button onClick={() => setShowWeightInput(!showWeightInput)}
-                        className="p-1.5 rounded-lg hover:bg-secondary transition-colors text-primary">
-                        <Plus className="w-4 h-4" />
-                      </button>
+                  <div className="bg-card rounded-2xl border border-border p-4" style={{ boxShadow: "var(--shadow-card)" }}>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Scale className="w-3.5 h-3.5 text-primary" />
+                      <span className="text-xs font-semibold text-foreground">Log today's weight</span>
                     </div>
-
-                    <div className="flex items-end gap-6 mb-3">
-                      <div>
-                        <p className="text-xs text-muted-foreground">Current</p>
-                        <p className="text-2xl font-serif font-bold text-foreground">
-                          {weightLog.length > 0 ? weightLog[weightLog.length - 1].weight : profile.currentWeight}
-                          <span className="text-sm font-sans text-muted-foreground ml-1">lbs</span>
-                        </p>
-                      </div>
-                      {profile.goalWeight && (
-                        <div>
-                          <p className="text-xs text-muted-foreground">Goal</p>
-                          <p className="text-lg font-serif font-semibold text-muted-foreground">
-                            {profile.goalWeight}
-                            <span className="text-sm font-sans ml-1">lbs</span>
-                          </p>
-                        </div>
-                      )}
-                      {profile.goalWeight && (
-                        <div className="ml-auto text-right">
-                          <p className="text-xs text-muted-foreground">To go</p>
-                          <p className="text-lg font-serif font-bold text-primary flex items-center gap-1">
-                            <TrendingDown className="w-4 h-4" />
-                            {Math.max(0, (weightLog.length > 0 ? weightLog[weightLog.length - 1].weight : profile.currentWeight!) - profile.goalWeight)}
-                            <span className="text-sm font-sans text-muted-foreground ml-0.5">lbs</span>
-                          </p>
-                        </div>
-                      )}
+                    <div className="flex items-center gap-3 mb-3">
+                      <input
+                        type="range"
+                        min={Math.max(80, currentWeight - 20)}
+                        max={currentWeight + 10}
+                        step={0.5}
+                        value={newWeight || currentWeight}
+                        onChange={(e) => setNewWeight(e.target.value)}
+                        className="flex-1 h-2 bg-secondary rounded-full appearance-none cursor-pointer accent-primary [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary"
+                      />
+                      <span className="text-lg font-serif font-bold text-foreground w-16 text-right">
+                        {newWeight || currentWeight}
+                        <span className="text-xs text-muted-foreground ml-0.5">lbs</span>
+                      </span>
                     </div>
-
-                    {profile.goalWeight && profile.currentWeight && (
-                      <div className="mb-3">
-                        <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                          <div className="h-full bg-primary rounded-full transition-all duration-500"
-                            style={{
-                              width: `${Math.min(100, Math.max(5, ((profile.currentWeight - (weightLog.length > 0 ? weightLog[weightLog.length - 1].weight : profile.currentWeight)) / (profile.currentWeight - profile.goalWeight)) * 100))}%`
-                            }} />
-                        </div>
-                      </div>
-                    )}
-
-                    {weightLog.length > 0 && (
-                      <div className="flex gap-2 overflow-x-auto pb-1 mb-2">
-                        {weightLog.slice(-5).map((entry, i) => (
-                          <div key={i} className="flex-shrink-0 px-3 py-1.5 bg-secondary/60 rounded-lg text-center">
-                            <p className="text-[10px] text-muted-foreground">{new Date(entry.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</p>
-                            <p className="text-xs font-semibold text-foreground">{entry.weight}</p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    <AnimatePresence>
-                      {showWeightInput && (
-                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden">
-                          <div className="flex gap-2 pt-2 border-t border-border mt-2">
-                            <input
-                              type="number"
-                              value={newWeight}
-                              onChange={(e) => setNewWeight(e.target.value)}
-                              placeholder="Today's weight"
-                              className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                            />
-                            <button
-                              onClick={() => {
-                                const w = parseFloat(newWeight);
-                                if (w > 0 && w < 1000) {
-                                  setWeightLog((prev) => [...prev, { date: new Date().toISOString(), weight: w }]);
-                                  setNewWeight("");
-                                  setShowWeightInput(false);
-                                }
-                              }}
-                              disabled={!newWeight || parseFloat(newWeight) <= 0}
-                              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold disabled:opacity-40"
-                            >
-                              Log
-                            </button>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    <button
+                      onClick={() => {
+                        const w = parseFloat(newWeight || String(currentWeight));
+                        if (w > 0 && w < 1000) {
+                          setWeightLog((prev) => [...prev, { date: new Date().toISOString(), weight: w }]);
+                          setNewWeight("");
+                        }
+                      }}
+                      className="w-full py-2 bg-primary text-primary-foreground rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity"
+                    >
+                      Log weight
+                    </button>
                   </div>
                 )}
 
@@ -341,7 +335,7 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
           )}
         </AnimatePresence>
 
-        {/* Your Light nudge */}
+        {/* Your Light nudge — positioned right after notifications */}
         <motion.button
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -436,7 +430,7 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
           </div>
         </motion.div>
 
-        {/* AI teaser — what sharing more unlocks */}
+        {/* AI teaser */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
           className="bg-card rounded-2xl border border-primary/20 p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
           <div className="flex items-center gap-2 mb-3">
@@ -488,7 +482,7 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
           </div>
         </motion.div>
 
-        {/* SPUR Assessment — 3 questions per session */}
+        {/* SPUR Assessment */}
         {!allSpurComplete && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
             className="bg-card rounded-2xl border border-border p-5" style={{ boxShadow: "var(--shadow-card)" }}>
@@ -578,7 +572,7 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
           </motion.div>
         )}
 
-        {/* Health Data Import — only after all SPUR questions */}
+        {/* Health Data Import */}
         {allSpurComplete && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
             className="bg-card rounded-2xl border border-primary/20 p-5" style={{ boxShadow: "var(--shadow-soft)" }}>
