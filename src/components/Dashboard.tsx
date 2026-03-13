@@ -186,8 +186,9 @@ const Dashboard = ({ profile, spurAnswers, setSpurAnswers, ehrConnected, setEhrC
       <div className="px-6 pt-8 pb-4">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <div>
-            <p className="text-sm text-muted-foreground">{greeting},</p>
-            <h1 className="text-2xl font-serif font-bold text-foreground">{profile.name}</h1>
+            <p className="text-xs text-primary font-semibold uppercase tracking-wider">Your Roots</p>
+            <h1 className="text-2xl font-serif font-bold text-foreground">{greeting}, {profile.name}</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">Who you are under the noise.</p>
           </div>
           <button onClick={onRestart} className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground" title="Start over">
             <RotateCcw className="w-4 h-4" />
