@@ -15,6 +15,7 @@ interface DashboardProps {
   ehrConnected: boolean;
   setEhrConnected: React.Dispatch<React.SetStateAction<boolean>>;
   onRestart: () => void;
+  onGoToLight: () => void;
 }
 
 const HEALTH_LABEL: Record<string, string> = {
