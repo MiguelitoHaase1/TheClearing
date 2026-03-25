@@ -1132,22 +1132,18 @@ export function renderMorningBrew(plan: MorningBrewPlan): string {
 
       recogInstance.onresult = function(event) {
         if (!activeTarget) return;
-        var interim = '';
-        for (var i = event.resultIndex; i < event.results.length; i++) {
-          var transcript = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            var current = activeTarget.textarea.value;
-            activeTarget.textarea.value = current + (current ? ' ' : '') + transcript;
-            activeTarget.interim.textContent = '';
-          } else {
-            interim += transcript;
-          }
+        var allText = '';
+        for (var i = 0; i < event.results.length; i++) {
+          allText += event.results[i][0].transcript;
         }
-        if (interim) activeTarget.interim.textContent = interim;
+        var base = activeTarget.baseText || '';
+        activeTarget.textarea.value = base + (base && allText ? ' ' : '') + allText;
+        activeTarget.interim.textContent = '';
       };
 
       recogInstance.onend = function() {
         if (activeTarget) {
+          activeTarget.baseText = activeTarget.textarea.value;
           try { recogInstance.start(); } catch(e) {}
         }
       };
@@ -1165,7 +1161,7 @@ export function renderMorningBrew(plan: MorningBrewPlan): string {
       ctrl.start = function() {
         if (!recogInstance) return;
         stopAllListening();
-        activeTarget = { textarea: textarea, interim: interim };
+        activeTarget = { textarea: textarea, interim: interim, baseText: textarea.value };
         ctrl.listening = true;
         micBtn.classList.add('listening');
         try { recogInstance.start(); } catch(e) {}
