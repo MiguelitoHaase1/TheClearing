@@ -67,35 +67,63 @@ The execution engine picks from this queue based on expected eval delta.
 `;
 }
 
-function claudeTemplate(ws: Workstream, evalsRelPath: string): string {
+export function claudeTemplate(ws: Workstream, evalsRelPath: string): string {
   const evalList = ws.eval_ids.map((id) => `- ${id}`).join("\n");
   return `# ${ws.name} — Agent Wiring
 
 ## Context
 
 This workstream serves: ${ws.jtbds.join(", ")}.
-Read \`goal.md\` in this directory for strategic direction.
+Read \`goal.md\` in this directory for strategic direction before every session.
 
 ## Files
 
-- \`goal.md\` — Human direction for this workstream (read before every experiment)
-- \`ideas-backlog.md\` — Hypothesis queue (pick the top queued entry)
-- \`experiment-log/\` — One file per experiment with before/after evals
+| File | Owner | Purpose |
+|------|-------|---------|
+| \`goal.md\` | Human | Strategic direction — read before every experiment |
+| \`ideas-backlog.md\` | Shared | Hypothesis queue — pick top queued entry, update status after experiments |
+| \`experiment-log/\` | Agent | One markdown file per experiment with before/after eval deltas |
+| \`${evalsRelPath}\` | Pipeline | Behavioral evals (single source of truth — NEVER copy content here) |
 
 ## Evals
 
-Evals live in \`${evalsRelPath}\` (single source of truth — never copy here).
-This workstream's relevant evals:
+Eval definitions live in \`${evalsRelPath}\`. Reference them by ID only.
+Do NOT paste eval targets, measurements, or scoring formulas into this file or goal.md.
+
+This workstream's relevant eval IDs:
 
 ${evalList}
 
-## Boundaries
+## Experiment Workflow
 
-- Do NOT modify evals — they are owned by the pipeline, not this workstream
-- Do NOT modify goal.md — it is owned by the human
-- DO read goal.md before selecting an experiment
-- DO update ideas-backlog.md status after each experiment
-- DO write experiment results to experiment-log/
+1. **Read** goal.md for current direction
+2. **Select** the top queued hypothesis from ideas-backlog.md (priority = expected delta × confidence)
+3. **Branch** into a git worktree for isolation
+4. **Implement** the proposed change within adaptation boundaries
+5. **Measure** run the eval suite, capture before/after deltas for this workstream's eval IDs
+6. **Decide** if eval delta meets threshold → merge and ship. If neutral or negative → reject with learnings
+7. **Update** mark the hypothesis status in ideas-backlog.md, write results to experiment-log/
+
+## Adaptation Boundaries
+
+**CAN do:**
+- Split a hypothesis into smaller testable changes
+- Reorder the backlog based on eval gap analysis
+- Add new hypotheses discovered during experiments
+- Propose new evals (via a hypothesis, not by modifying evals directly)
+
+**CANNOT do:**
+- Modify eval definitions, targets, or measurements (owned by the pipeline)
+- Modify goal.md (owned by the human)
+- Skip the eval measurement step
+- Ship changes that regress any eval
+- Touch files outside this workstream directory (except the shared evals file for reading)
+
+## Circuit Breakers
+
+- 3 test failures on the same error → STOP and report
+- Touching >5 files in a single experiment → STOP (experiment too broad)
+- Eval regression on any metric → reject the change, log learnings
 `;
 }
 

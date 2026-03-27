@@ -8,7 +8,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { scaffoldWorkstreams } from "./scaffold-workstreams.js";
+import { scaffoldWorkstreams, claudeTemplate } from "./scaffold-workstreams.js";
 import {
   parseStrategy,
   parseEvals,
@@ -155,6 +155,108 @@ describe("scaffoldWorkstreams (creates files)", () => {
 
     const afterContent = readFileSync(goalPath, "utf-8");
     expect(afterContent).toBe(customContent);
+  });
+});
+
+// ── Guard-001: Evals Referenced, Never Copied ──────────────────────────
+
+describe("guard-001: CLAUDE.md must not contain eval content", () => {
+  it("CLAUDE.md references eval IDs but not targets or measurements", () => {
+    const strategy = parseStrategy(STRATEGY_PATH);
+    const evals = parseEvals(EVALS_PATH);
+    const plane = analyzeByJourneyPhase(strategy, evals);
+
+    scaffoldWorkstreams(plane, tempDir);
+
+    for (const ws of plane.workstreams) {
+      const claudePath = join(
+        tempDir,
+        "workstreams",
+        ws.slug,
+        ".claude",
+        "CLAUDE.md",
+      );
+      const content = readFileSync(claudePath, "utf-8");
+
+      // Must contain eval IDs (reference)
+      for (const evalId of ws.eval_ids) {
+        expect(content).toContain(evalId);
+      }
+
+      // Must NOT contain eval targets, measurements, or scoring formulas
+      for (const ev of evals.behavioral_evals) {
+        expect(content).not.toContain(ev.measurement);
+        expect(content).not.toContain(String(ev.target));
+        expect(content).not.toContain(ev.statement);
+      }
+    }
+  });
+
+  it("goal.md does not contain eval content either", () => {
+    const strategy = parseStrategy(STRATEGY_PATH);
+    const evals = parseEvals(EVALS_PATH);
+    const plane = analyzeByJTBD(strategy, evals);
+
+    scaffoldWorkstreams(plane, tempDir);
+
+    for (const ws of plane.workstreams) {
+      const goalPath = join(tempDir, "workstreams", ws.slug, "goal.md");
+      const content = readFileSync(goalPath, "utf-8");
+
+      for (const ev of evals.behavioral_evals) {
+        expect(content).not.toContain(ev.measurement);
+        expect(content).not.toContain(String(ev.target));
+      }
+    }
+  });
+});
+
+// ── CLAUDE.md Template Quality ─────────────────────────────────────────
+
+describe("claudeTemplate quality", () => {
+  it("includes experiment workflow steps", () => {
+    const ws = {
+      name: "Test",
+      slug: "test",
+      description: "Test workstream",
+      jtbds: ["Test job"],
+      eval_ids: ["eval-001"],
+    };
+    const content = claudeTemplate(ws, "../../evals.json");
+
+    expect(content).toContain("## Experiment Workflow");
+    expect(content).toContain("goal.md");
+    expect(content).toContain("ideas-backlog.md");
+    expect(content).toContain("experiment-log/");
+  });
+
+  it("includes adaptation boundaries", () => {
+    const ws = {
+      name: "Test",
+      slug: "test",
+      description: "Test workstream",
+      jtbds: ["Test job"],
+      eval_ids: ["eval-001"],
+    };
+    const content = claudeTemplate(ws, "../../evals.json");
+
+    expect(content).toContain("## Adaptation Boundaries");
+    expect(content).toContain("CAN do");
+    expect(content).toContain("CANNOT do");
+    expect(content).toContain("NEVER copy");
+  });
+
+  it("includes circuit breakers", () => {
+    const ws = {
+      name: "Test",
+      slug: "test",
+      description: "Test workstream",
+      jtbds: ["Test job"],
+      eval_ids: ["eval-001"],
+    };
+    const content = claudeTemplate(ws, "../../evals.json");
+
+    expect(content).toContain("## Circuit Breakers");
   });
 });
 
