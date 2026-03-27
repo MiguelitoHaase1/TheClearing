@@ -1,0 +1,104 @@
+{
+  "projectName": "Continuous Improvements",
+  "strategySource": "strategy.md",
+  "currentPhase": 7,
+  "completedPhases": [1, 2, 3, 4, 5, 6, 7],
+  "startedAt": "2026-03-27T00:00:00Z",
+  "lastUpdated": "2026-03-27T00:00:00Z",
+  "strategy": {
+    "title": "Continuous Improvements",
+    "vision": "Every product I build gets better on its own, every day. I spend my time having ideas and giving feedback. The system handles the rest.",
+    "where_to_play": "Solo builder (Michael) running 5-10 personal products, each with workstream-level continuous improvement loops, orchestrated via Discord and the build system pipeline.",
+    "principles": ["Autonomy over Control", "Seamless Entry, Enriched Output", "Cognitive Peace over Speed", "Learning Evals over Fixed Evals"],
+    "jtbd_now": ["Capture ideas instantly", "Enrich ideas through conversation", "Execute experiments on a heartbeat", "Review results with confidence"],
+    "jtbd_later": ["Stay informed without research", "Evolve evals as you learn"],
+    "jtbd_never": ["Cross-product learning", "Multi-user coordination", "Real-time execution"]
+  },
+  "research": {
+    "completed": true,
+    "existingProducts": [
+      "Karpathy AutoResearch — 630-line Python, program.md-driven, ML-only",
+      "goal-md — Generalizes AutoResearch to any domain with constructed metrics",
+      "Stripe Minions — 1300 PRs/week, enterprise-scale",
+      "Atlassian product agents — 4 agents for discovery, enterprise PM-bound"
+    ],
+    "githubRepos": [
+      "AutoCodeRover (3.1K stars)",
+      "Agent-Eval-Refine (Berkeley-NLP)",
+      "goal-md (jmilinovich)",
+      "AgentBench (THUDM, ~2K stars)"
+    ],
+    "trends": [
+      "The Loopy Era — continuous self-improvement loops",
+      "program.md/goal.md as instruction format",
+      "Agentic engineering replacing vibe coding",
+      "Eval-driven development"
+    ],
+    "gaps": [
+      "No product connects capture → sparring → execution → review",
+      "No conversational enrichment before experiments",
+      "No domain scouting + backlog + execution together",
+      "No workstream-fractal architecture",
+      "No Discord-based async capture with eval-mapped hypotheses"
+    ]
+  },
+  "structuralDecisions": {
+    "goalMd": "Human-owned strategic direction per workstream. Changes monthly/bi-weekly.",
+    "claudeMd": "Wiring file. Points to goal.md, evals, backlog.",
+    "evalsMd": "Lives wherever stage 3 put them. Never copied.",
+    "noDuplication": "goal.md never contains evals. CLAUDE.md never contains strategy.",
+    "workstreamOnboarding": "First step of this product. Agent proposes 2-3 fracture planes, builder picks."
+  },
+  "exploration": {
+    "layer1Selected": ["Discord Bot + Cron Skills", "Next.js Dashboard + API"],
+    "layer2Selected": ["A2 (Claude Code + Discord Channels)", "B1 (Scheduled Remote Agent)", "C2 (Server-rendered dashboard with Supabase)"],
+    "synthesizedCandidates": ["The Native Loop", "The Hybrid", "The Lean Loop"]
+  },
+  "candidates": [
+    {
+      "id": "native-loop",
+      "name": "The Native Loop",
+      "selected": true,
+      "coreIdea": "Everything runs inside Claude Code. Discord Channels for capture. Scheduled agent for execution. Supabase for data. Next.js dashboard on Vercel."
+    },
+    {
+      "id": "hybrid",
+      "name": "The Hybrid",
+      "selected": false,
+      "coreIdea": "Chat SDK Discord bot for capture. Scheduled agent for execution. Same Supabase + dashboard stack."
+    },
+    {
+      "id": "lean-loop",
+      "name": "The Lean Loop",
+      "selected": false,
+      "coreIdea": "Channels + scheduled agent + generated HTML. No database. Everything is files."
+    }
+  ],
+  "deployment": { "vercelUrl": null },
+  "selection": {
+    "selectedArchetypeId": "native-loop",
+    "howToWin": "The only system where a sentence in Discord becomes a tested, measured, shipped improvement by morning — with zero infrastructure outside Claude Code, Vercel, and Supabase.",
+    "boundaries": {
+      "no_gos": [
+        "No separate Discord bot deployment",
+        "No cross-product learning in V1",
+        "No multi-user features",
+        "No real-time execution",
+        "No capture UI beyond Discord",
+        "No duplication of evals in goal.md"
+      ],
+      "rabbit_holes": [
+        "Dashboard before loop works end-to-end",
+        "Over-engineering Supabase schema",
+        "Machine-readable goal.md",
+        "Premature workstream definition"
+      ],
+      "constraints": [
+        "Claude Code Channels must support async Discord listening",
+        "Scheduled remote agent requires Claude Code Max",
+        "Each workstream needs evals from pipeline stage 3",
+        "Supabase free tier limits"
+      ]
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "projectName": "Continuous Improvements",
+  "projectSlug": "continuous-improvements",
+  "currentPhase": 5,
+  "completedPhases": [1, 2, 3, 4, 5],
+  "startedAt": "2026-03-27T00:00:00Z",
+  "lastUpdated": "2026-03-27T00:00:00Z",
+  "scope": {
+    "defined": true,
+    "outcome": "Products self-improve daily. Builder spends time on ideas and feedback, not code.",
+    "vision": "Every product I build gets better on its own, every day. I spend my time having ideas and giving feedback. The system handles the rest."
+  },
+  "tenets": {
+    "facts": [
+      "One backlog is the single place for all ideas",
+      "Adding ideas must feel seamless",
+      "External research feeds the backlog automatically",
+      "Ideas need inline sparring to avoid misunderstandings"
+    ],
+    "assumptions": [
+      "Heartbeat-based execution protects cognitive load",
+      "5am DK execution = cheaper tokens + evening results",
+      "Cadence TBD — daily, every other day, or weekly",
+      "Async Discord channels work for idea refinement",
+      "System can reliably self-direct improvement"
+    ],
+    "beliefs": [
+      "System should be self-directing — evals guide, human curates",
+      "Ideas that don't map to evals signal eval gaps, not bad ideas",
+      "Seamless entry with enriched output"
+    ],
+    "principles": [
+      "Autonomy over Control",
+      "Seamless Entry, Enriched Output",
+      "Cognitive Peace over Speed",
+      "Learning Evals over Fixed Evals"
+    ]
+  },
+  "chapters": {
+    "completed": ["problem-users", "user-experience", "appendix-decisions", "appendix-faq", "appendix-tenets"],
+    "current": null,
+    "remaining": []
+  }
+}

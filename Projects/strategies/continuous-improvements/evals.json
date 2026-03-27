@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "strategy_slug": "continuous-improvements",
+    "generated": "2026-03-27T00:00:00Z",
+    "version": "1.0.0"
+  },
+  "coverage": {
+    "total_now_jtbds": 4,
+    "jtbds_with_evals": 4,
+    "coverage_ratio": 1.0
+  },
+  "behavioral_evals": [
+    {
+      "id": "eval-001",
+      "jtbd": "Capture ideas instantly",
+      "statement": "Builder captures ≥2 ideas per day via Discord, averaged over a week",
+      "type": "behavioral",
+      "score_type": "continuous",
+      "target": 0.85,
+      "baseline": null,
+      "measurement": "days_with_2plus_ideas / 7",
+      "success_criteria": "6 of 7 days meet the 2-idea threshold for 2 consecutive weeks",
+      "grader": "code",
+      "quality_tier": 2,
+      "negative_cases": [
+        {
+          "statement": "Ideas go into the void — captured but <50% receive an enrichment thread within 1 hour",
+          "expected_score": 0.2
+        }
+      ]
+    },
+    {
+      "id": "eval-002",
+      "jtbd": "Enrich ideas through conversation",
+      "statement": "Builder voluntarily extends enrichment threads beyond the system's initial questions, averaging ≥5 total exchanges per idea",
+      "type": "behavioral",
+      "score_type": "continuous",
+      "target": 0.70,
+      "baseline": null,
+      "measurement": "threads_with_5plus_exchanges / total_enrichment_threads",
+      "success_criteria": "70% of enrichment threads reach ≥5 exchanges for 2 consecutive weeks",
+      "grader": "code",
+      "quality_tier": 2,
+      "negative_cases": [
+        {
+          "statement": "Scattered, no story — enrichment threads complete but <30% of graduated hypotheses reference the workstream's goal.md direction",
+          "expected_score": 0.2
+        }
+      ]
+    },
+    {
+      "id": "eval-003",
+      "jtbd": "Execute experiments on a heartbeat",
+      "statement": "Experiment results trigger new idea capture — builder logs ≥1 new idea within 4 hours of reviewing results, on days when experiments ran",
+      "type": "behavioral",
+      "score_type": "continuous",
+      "target": 0.60,
+      "baseline": null,
+      "measurement": "days_with_followon_idea / days_with_experiment_results",
+      "success_criteria": "60% of experiment-run days produce a follow-on idea for 2 consecutive weeks",
+      "grader": "code",
+      "quality_tier": 2,
+      "negative_cases": [
+        {
+          "statement": "Agent hallucinated the fix — experiment ships but builder marks it 'wouldn't care if reverted' during evening review",
+          "expected_score": 0.1
+        }
+      ]
+    },
+    {
+      "id": "eval-004",
+      "jtbd": "Review results with confidence",
+      "statement": "Builder clicks through to the product AND provides qualitative feedback on ≥70% of experiment results during evening review",
+      "type": "behavioral",
+      "score_type": "continuous",
+      "target": 0.70,
+      "baseline": null,
+      "measurement": "results_with_clickthrough_and_feedback / total_experiment_results",
+      "success_criteria": "70% of experiment results get both a click-through and feedback for 2 consecutive weeks",
+      "grader": "code",
+      "quality_tier": 2,
+      "negative_cases": []
+    }
+  ],
+  "leading_indicators": {
+    "primary": [
+      {
+        "id": "li-001",
+        "name": "Experiment ship rate",
+        "jtbd_link": "Execute experiments on a heartbeat",
+        "target": 0.60,
+        "measurement": "shipped_experiments / heartbeat_runs_this_week",
+        "grader": "code"
+      },
+      {
+        "id": "li-002",
+        "name": "Idea-to-experiment latency",
+        "jtbd_link": "Capture ideas instantly + Enrich through conversation",
+        "target": 0.80,
+        "measurement": "ideas_experimented_within_5_days / total_graduated_ideas",
+        "grader": "code"
+      }
+    ],
+    "secondary": [
+      {
+        "id": "li-003",
+        "name": "Autonomy ratio",
+        "target": 0.80,
+        "measurement": "1 - (runs_needing_human / total_runs)",
+        "grader": "code"
+      }
+    ]
+  },
+  "guardrails": [
+    {
+      "id": "guard-001",
+      "source": "no-go",
+      "statement": "Eval definitions must exist in exactly one place (evals.md / evals.json). goal.md, CLAUDE.md, and ideas-backlog.md must never contain eval targets, measurements, or scoring formulas.",
+      "fail_condition": "Any eval metric, target, or measurement formula found in goal.md or CLAUDE.md"
+    },
+    {
+      "id": "guard-002",
+      "source": "architecture",
+      "statement": "Every shipped experiment must be revertable from the dashboard with a single click. Granular revert per-change must be available. Revert triggers Claude Code.",
+      "fail_condition": "An experiment exists in the dashboard without a working revert action, OR revert requires terminal access"
+    }
+  ]
+}

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Inter:wght@400;500;600&family=SF+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #FAF9F6;
+    --bg-secondary: #F0EFEB;
+    --bg-card: #FFFFFF;
+    --text-primary: #1A1A1A;
+    --text-secondary: #6B6B6B;
+    --text-muted: #9B9B9B;
+    --coral: #D97757;
+    --coral-light: rgba(217, 119, 87, 0.1);
+    --coral-dark: #C4684A;
+    --sage: #B8C4B8;
+    --border-light: #E5E4E0;
+    --border-medium: #D1D0CC;
+    --font-heading: 'Source Serif 4', Georgia, serif;
+    --font-body: 'Inter', -apple-system, sans-serif;
+    --font-mono: 'SF Mono', 'Consolas', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    padding: 48px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-family: var(--font-heading);
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-family: var(--font-heading);
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 16px;
+    margin-top: 48px;
+  }
+
+  h3 {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 17px;
+    margin-bottom: 32px;
+  }
+
+  .stats-bar {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+    padding: 20px 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stat-value {
+    font-family: var(--font-mono);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--coral);
+  }
+
+  .stat-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: border-color 150ms ease-out;
+  }
+
+  .card:hover { border-color: var(--border-medium); }
+
+  .card-title {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .card-meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .badge-critical { background: var(--coral-light); color: var(--coral-dark); }
+  .badge-parallel { background: rgba(184, 196, 184, 0.3); color: #5A6B5A; }
+  .badge-checkpoint { background: rgba(197, 193, 214, 0.3); color: #6B6580; }
+
+  .coverage-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .coverage-table th {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--border-medium);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+  }
+
+  .coverage-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .coverage-table tr:last-child td { border-bottom: none; }
+
+  .coverage-thin { color: var(--coral); font-weight: 500; }
+  .coverage-good { color: #5A6B5A; }
+
+  .risk-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .risk-item:last-child { border-bottom: none; }
+
+  .risk-score {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--coral);
+    min-width: 36px;
+    text-align: center;
+  }
+
+  .reflection-prompt {
+    padding: 16px 20px;
+    background: var(--coral-light);
+    border-left: 3px solid var(--coral);
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 12px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .boundary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .boundary-table th {
+    text-align: left;
+    padding: 10px 12px;
+    background: var(--bg-secondary);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .boundary-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: top;
+  }
+
+  .dep-graph {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+
+  .dep-node { display: flex; align-items: center; gap: 8px; }
+  .dep-node .arrow { color: var(--text-muted); }
+  .dep-node .epic { color: var(--coral); font-weight: 600; }
+  .dep-node .task { color: var(--text-secondary); }
+  .dep-node .checkpoint { color: #6B6580; font-weight: 500; }
+
+  .section-divider {
+    height: 1px;
+    background: var(--border-light);
+    margin: 48px 0;
+  }
+
+  @media (max-width: 768px) {
+    body { padding: 24px 16px; }
+    h1 { font-size: 28px; }
+    .stats-bar { flex-direction: column; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+// === PLAN_DATA_START ===
+const PLAN_DATA = {
+  name: "Continuous Improvements — The Native Loop",
+  date: "2026-03-27",
+  strategySource: "strategy.md + archetype-selection.md + evals.json",
+
+  stats: {
+    epics: 4,
+    tasks: 17,
+    checkpoints: 3,
+    parallelTracks: 0,
+    dependencyDepth: 4,
+    estimatedSessions: 20
+  },
+
+  criticalPath: [
+    { type: "epic", id: "epic-1", title: "Workstream Onboarding", badge: "critical" },
+    { type: "epic", id: "epic-2", title: "Capture & Enrich Pipeline", badge: "critical" },
+    { type: "checkpoint", id: "cp-1", title: "Checkpoint: eval-001 + eval-002" },
+    { type: "epic", id: "epic-3", title: "Execution Engine", badge: "critical" },
+    { type: "checkpoint", id: "cp-2", title: "Checkpoint: li-001 + li-003" },
+    { type: "epic", id: "epic-4", title: "Review Dashboard", badge: "critical" },
+    { type: "checkpoint", id: "cp-3", title: "Checkpoint: Full eval suite" }
+  ],
+
+  dependencyGraph: [
+    { text: "[Epic 1] Workstream Onboarding (P0)", type: "epic" },
+    { text: "  \u251c\u2500\u2500 Fracture plane analysis skill", type: "task" },
+    { text: "  \u251c\u2500\u2500 Directory scaffolding", type: "task" },
+    { text: "  \u2514\u2500\u2500 CLAUDE.md wiring template", type: "task" },
+    { text: "", type: "task" },
+    { text: "[Epic 2] Capture & Enrich Pipeline (P0)", type: "epic" },
+    { text: "  \u251c\u2500\u2500 Discord Channels setup", type: "task" },
+    { text: "  \u251c\u2500\u2500 Idea capture skill", type: "task" },
+    { text: "  \u251c\u2500\u2500 Sparring conversation flow", type: "task" },
+    { text: "  \u2514\u2500\u2500 Hypothesis graduation", type: "task" },
+    { text: "  [Checkpoint] eval-001 + eval-002", type: "checkpoint" },
+    { text: "", type: "task" },
+    { text: "[Epic 3] Execution Engine (P1)", type: "epic" },
+    { text: "  \u251c\u2500\u2500 Supabase schema", type: "task" },
+    { text: "  \u251c\u2500\u2500 Scheduled agent trigger", type: "task" },
+    { text: "  \u251c\u2500\u2500 Ralph Wiggum experiment runner", type: "task" },
+    { text: "  \u2514\u2500\u2500 Supabase result writer", type: "task" },
+    { text: "  [Checkpoint] li-001 + li-003", type: "checkpoint" },
+    { text: "", type: "task" },
+    { text: "[Epic 4] Review Dashboard (P1)", type: "epic" },
+    { text: "  \u251c\u2500\u2500 Next.js project setup + Vercel deploy", type: "task" },
+    { text: "  \u251c\u2500\u2500 Experiment results view", type: "task" },
+    { text: "  \u251c\u2500\u2500 Qualitative narrative + try-it-now links", type: "task" },
+    { text: "  \u251c\u2500\u2500 Sean Ellis feedback form", type: "task" },
+    { text: "  \u251c\u2500\u2500 One-click revert (triggers Claude Code)", type: "task" },
+    { text: "  \u2514\u2500\u2500 Eval trend lines", type: "task" },
+    { text: "  [Checkpoint] Full eval suite", type: "checkpoint" }
+  ],
+
+  evalCoverage: [
+    { evalId: "eval-001", statement: "Builder captures \u22652 ideas/day via Discord", epics: ["Epic 2"], taskCount: 4, status: "good" },
+    { evalId: "eval-002", statement: "Builder extends threads to \u22655 exchanges", epics: ["Epic 2"], taskCount: 2, status: "good" },
+    { evalId: "eval-003", statement: "Results trigger follow-on idea within 4h", epics: ["Epic 3", "Epic 4"], taskCount: 3, status: "good" },
+    { evalId: "eval-004", statement: "Click-through + feedback on 70% of results", epics: ["Epic 4"], taskCount: 4, status: "good" },
+    { evalId: "li-001", statement: "3+ experiments ship per week", epics: ["Epic 3"], taskCount: 3, status: "good" },
+    { evalId: "li-002", statement: "Idea-to-experiment \u22645 days", epics: ["Epic 2", "Epic 3"], taskCount: 5, status: "good" },
+    { evalId: "li-003", statement: "80% autonomy ratio", epics: ["Epic 3"], taskCount: 2, status: "good" },
+    { evalId: "guard-001", statement: "No eval duplication in goal.md/CLAUDE.md", epics: ["Epic 1"], taskCount: 1, status: "good" },
+    { evalId: "guard-002", statement: "One-click revert from dashboard", epics: ["Epic 4"], taskCount: 1, status: "thin" }
+  ],
+
+  concentrationRisks: [
+    { item: "Discord Channels setup (Epic 2, Task 1)", score: 4, reason: "Blocks all capture and enrichment. If Channels doesn't support async listening, the entire capture pipeline needs rearchitecting to Chat SDK bot." },
+    { item: "Supabase schema (Epic 3, Task 1)", score: 3, reason: "Blocks result writing, dashboard reads, and trend lines. All of Epic 4 depends on this schema existing." },
+    { item: "Scheduled agent trigger (Epic 3, Task 2)", score: 3, reason: "Blocks all experiment execution. If /schedule doesn't work, need fallback to Vercel Cron." }
+  ],
+
+  reflectionPrompts: [
+    "Epic 2 (Capture & Enrich) has 4 tasks and Epic 1 (Onboarding) has 3. Epic 2 targets the two highest-priority evals. Is 4 tasks enough, or should sparring get more granularity?",
+    "Epic 4 (Dashboard) has 6 tasks — the most of any epic. Is this proportional to its eval impact (eval-004 target is 0.70, lowest of the four)?",
+    "guard-002 (one-click revert) is targeted by only one task. If that task fails or gets deprioritized, there's no fallback. Is this acceptable?",
+    "Discord Channels is the riskiest dependency. Should there be an explicit fallback task in Epic 2 that stubs out the Chat SDK bot path, just in case?",
+    "The critical path is strictly sequential (4 deep). Could any Epic 3 tasks (Supabase schema, scheduled trigger) start in parallel with late Epic 2 tasks?",
+    "Eval-003 (inspiration loop) depends on both the execution engine AND the review dashboard. It can only be measured after Epic 4. Is that too late for a signal?",
+    "Workstream onboarding (Epic 1) has no product-level eval. Its value is entirely enabling. Are 3 tasks right, or is this over-built for a bootstrap step?"
+  ],
+
+  boundaries: {
+    can: [
+      "Split or merge tasks within an epic",
+      "Add evals (more coverage is always good)",
+      "Strengthen existing evals (more specific, add edge cases)",
+      "Add guardrails for newly discovered risks",
+      "Reorder tasks within an epic",
+      "Defer tasks to later in the graph",
+      "Adjust effort estimates"
+    ],
+    cannot: [
+      "Delete or weaken FR-level evals",
+      "Remove or reduce epic scope",
+      "Change JTBD scope",
+      "Add new epics",
+      "Skip the quality gate (typecheck && lint && test)",
+      "Reverse foundational architecture decisions",
+      "Restructure the dependency graph",
+      "Copy eval definitions into goal.md or CLAUDE.md (guard-001)"
+    ],
+    escalation: [
+      "Eval failure rate > 30% within an epic",
+      "Architecture conflict blocking multiple tasks (e.g., Channels doesn't work)",
+      "Missing JTBD discovered during implementation",
+      "Scope explosion (epic requires >8 tasks)",
+      "Circular dependency that can't be resolved by reordering"
+    ]
+  },
+
+  epics: [
+    {
+      id: "epic-1",
+      title: "Workstream Onboarding",
+      jtbd: "Bootstrap (enables all JTBDs)",
+      evalTargets: "guard-001 (no eval duplication)",
+      priority: "P0",
+      onCriticalPath: true,
+      tasks: [
+        { id: "task-1-1", title: "Fracture plane analysis", evalSpec: "FR-001a: Propose 2-3 fracture planes with trade-offs", doneWhen: "Reads strategy + evals, outputs structured options" },
+        { id: "task-1-2", title: "Directory scaffolding", evalSpec: "FR-001b: Create goal.md + backlog + CLAUDE.md per workstream", doneWhen: "bd test verifies file structure exists" },
+        { id: "task-1-3", title: "CLAUDE.md wiring template", evalSpec: "FR-001c: Claude Code reads CLAUDE.md and finds goal.md + evals", doneWhen: "Agent entering workstream dir gets correct context" }
+      ]
+    },
+    {
+      id: "epic-2",
+      title: "Capture & Enrich Pipeline",
+      jtbd: "Capture ideas instantly + Enrich through conversation",
+      evalTargets: "eval-001 >= 0.85, eval-002 >= 0.70",
+      priority: "P0",
+      onCriticalPath: true,
+      tasks: [
+        { id: "task-2-1", title: "Discord Channels setup", evalSpec: "FR-002a: Message received via Channels within 60s", doneWhen: "Test message in Discord channel triggers Claude Code" },
+        { id: "task-2-2", title: "Idea capture skill", evalSpec: "FR-002a: Identify idea, associate with workstream, open thread", doneWhen: "Idea message -> thread opened -> tagged to workstream" },
+        { id: "task-2-3", title: "Sparring conversation flow", evalSpec: "FR-002b: Ask clarifying questions, map to evals", doneWhen: "Thread has 2-3 system questions referencing goal.md context" },
+        { id: "task-2-4", title: "Hypothesis graduation", evalSpec: "FR-002c+d: Graduate to structured hypothesis in backlog", doneWhen: "ideas-backlog.md has entry with all required fields" }
+      ]
+    },
+    {
+      id: "epic-3",
+      title: "Execution Engine",
+      jtbd: "Execute experiments on a heartbeat",
+      evalTargets: "li-001 >= 0.60, li-003 >= 0.80",
+      priority: "P1",
+      onCriticalPath: true,
+      tasks: [
+        { id: "task-3-1", title: "Supabase schema", evalSpec: "FR-003c: experiments + eval_deltas tables exist", doneWhen: "Tables created, test insert/query works" },
+        { id: "task-3-2", title: "Scheduled agent trigger", evalSpec: "FR-003a: 5am DK trigger reads goal.md, picks top hypothesis", doneWhen: "/schedule configured and test-triggered successfully" },
+        { id: "task-3-3", title: "Ralph Wiggum experiment runner", evalSpec: "FR-003b: Worktree -> implement -> test -> eval loop", doneWhen: "One experiment runs end-to-end with circuit breakers" },
+        { id: "task-3-4", title: "Supabase result writer + backlog updater", evalSpec: "FR-003c+d: Results in Supabase, backlog status updated", doneWhen: "Experiment results queryable, hypothesis marked shipped/rejected" }
+      ]
+    },
+    {
+      id: "epic-4",
+      title: "Review Dashboard",
+      jtbd: "Review results with confidence",
+      evalTargets: "eval-004 >= 0.70, guard-002 (one-click revert)",
+      priority: "P1",
+      onCriticalPath: true,
+      tasks: [
+        { id: "task-4-1", title: "Next.js project + Vercel deploy", evalSpec: "FR-004a: Dashboard loads with Supabase connection", doneWhen: "Live URL on Vercel, reads from Supabase" },
+        { id: "task-4-2", title: "Experiment results view", evalSpec: "FR-004a: List experiments, filter by workstream/date", doneWhen: "Results render with eval deltas, workstream filter works" },
+        { id: "task-4-3", title: "Qualitative narrative + try-it-now", evalSpec: "FR-004b: Each result has why-narrative and product link", doneWhen: "Narrative renders, link opens changed product" },
+        { id: "task-4-4", title: "Sean Ellis feedback form", evalSpec: "FR-004c: Inline feedback per experiment", doneWhen: "Feedback submits to Supabase, renders in results" },
+        { id: "task-4-5", title: "One-click revert", evalSpec: "guard-002: Revert button triggers Claude Code", doneWhen: "Click reverts experiment, granular per-change available" },
+        { id: "task-4-6", title: "Eval trend lines", evalSpec: "FR-004a: Time-series charts per workstream", doneWhen: "Charts render with real Supabase data over time" }
+      ]
+    }
+  ]
+};
+// === PLAN_DATA_END ===
+</script>
+
+<h1 id="plan-title"></h1>
+<p class="subtitle" id="plan-subtitle"></p>
+
+<div class="stats-bar" id="stats-bar"></div>
+
+<h2>Critical Path</h2>
+<p style="color: var(--text-secondary); margin-bottom: 16px;">The shortest route through the eval landscape. Everything on this path is a bottleneck.</p>
+<div class="dep-graph" id="dep-graph"></div>
+
+<div class="section-divider"></div>
+
+<h2>Eval Coverage</h2>
+<p style="color: var(--text-secondary); margin-bottom: 16px;">Every product-level eval must be targeted by at least one epic and task. <span class="coverage-thin">Thin coverage</span> means one failure breaks the chain.</p>
+<div class="card">
+  <table class="coverage-table" id="coverage-table">
+    <thead><tr><th>Eval</th><th>Statement</th><th>Epics</th><th>Tasks</th><th>Status</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<div class="section-divider"></div>
+
+<h2>Concentration Risk</h2>
+<p style="color: var(--text-secondary); margin-bottom: 16px;">Items that block the most downstream work. Single points of failure.</p>
+<div class="card" id="risk-list"></div>
+
+<div class="section-divider"></div>
+
+<h2>Reflection Prompts</h2>
+<p style="color: var(--text-secondary); margin-bottom: 16px;">Answer these before approving. They surface weak spots the stats don't show.</p>
+<div id="reflection-prompts"></div>
+
+<div class="section-divider"></div>
+
+<h2>Adaptation Boundaries</h2>
+<p style="color: var(--text-secondary); margin-bottom: 16px;">Rules governing what agents can and cannot change during execution.</p>
+<div class="card">
+  <table class="boundary-table" id="boundary-table">
+    <thead><tr><th style="width:140px">Category</th><th>Rules</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<div class="section-divider"></div>
+
+<h2>Epics & Tasks</h2>
+<div id="epics-list"></div>
+
+<script>
+  // Render title
+  document.getElementById('plan-title').textContent = `Plan Review: ${PLAN_DATA.name}`;
+  document.getElementById('plan-subtitle').textContent = `Generated ${PLAN_DATA.date} from ${PLAN_DATA.strategySource}`;
+
+  // Render stats
+  const statsBar = document.getElementById('stats-bar');
+  const statsItems = [
+    { value: PLAN_DATA.stats.epics, label: 'Epics' },
+    { value: PLAN_DATA.stats.tasks, label: 'Tasks' },
+    { value: PLAN_DATA.stats.checkpoints, label: 'Checkpoints' },
+    { value: PLAN_DATA.stats.parallelTracks, label: 'Parallel Tracks' },
+    { value: PLAN_DATA.stats.dependencyDepth, label: 'Dependency Depth' },
+    { value: PLAN_DATA.stats.estimatedSessions, label: 'Est. Sessions' },
+  ];
+  statsBar.innerHTML = statsItems.map(s => `
+    <div class="stat">
+      <span class="stat-value">${s.value}</span>
+      <span class="stat-label">${s.label}</span>
+    </div>
+  `).join('');
+
+  // Render dependency graph
+  const depGraph = document.getElementById('dep-graph');
+  depGraph.innerHTML = PLAN_DATA.dependencyGraph.map(node => `
+    <div class="dep-node">
+      <span class="${node.type}">${node.text}</span>
+    </div>
+  `).join('');
+
+  // Render eval coverage
+  const coverageBody = document.querySelector('#coverage-table tbody');
+  coverageBody.innerHTML = PLAN_DATA.evalCoverage.map(e => `
+    <tr>
+      <td><code>${e.evalId}</code></td>
+      <td>${e.statement}</td>
+      <td>${e.epics.join(', ')}</td>
+      <td>${e.taskCount}</td>
+      <td class="${e.status === 'thin' ? 'coverage-thin' : 'coverage-good'}">${e.status === 'thin' ? 'Thin' : 'Good'}</td>
+    </tr>
+  `).join('');
+
+  // Render concentration risks
+  const riskList = document.getElementById('risk-list');
+  riskList.innerHTML = PLAN_DATA.concentrationRisks.map(r => `
+    <div class="risk-item">
+      <span class="risk-score">${r.score}</span>
+      <div>
+        <strong>${r.item}</strong>
+        <div style="color: var(--text-secondary); font-size: 13px;">${r.reason}</div>
+      </div>
+    </div>
+  `).join('') || '<p style="color: var(--text-muted); padding: 12px;">No concentration risks identified.</p>';
+
+  // Render reflection prompts
+  const reflectionDiv = document.getElementById('reflection-prompts');
+  reflectionDiv.innerHTML = PLAN_DATA.reflectionPrompts.map(p => `
+    <div class="reflection-prompt">${p}</div>
+  `).join('');
+
+  // Render boundaries
+  const boundaryBody = document.querySelector('#boundary-table tbody');
+  const boundaryRows = [
+    { cat: 'Agents CAN', items: PLAN_DATA.boundaries.can, color: '#5A6B5A' },
+    { cat: 'Agents CANNOT', items: PLAN_DATA.boundaries.cannot, color: 'var(--coral-dark)' },
+    { cat: 'Escalation Triggers', items: PLAN_DATA.boundaries.escalation, color: '#6B6580' },
+  ];
+  boundaryBody.innerHTML = boundaryRows.map(b => `
+    <tr>
+      <td style="font-weight: 600; color: ${b.color};">${b.cat}</td>
+      <td><ul style="margin: 0; padding-left: 16px;">${b.items.map(i => `<li>${i}</li>`).join('')}</ul></td>
+    </tr>
+  `).join('');
+
+  // Render epics
+  const epicsList = document.getElementById('epics-list');
+  epicsList.innerHTML = PLAN_DATA.epics.map(epic => `
+    <div class="card">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+        <span class="card-title">${epic.title}</span>
+        ${epic.onCriticalPath ? '<span class="badge badge-critical">Critical Path</span>' : '<span class="badge badge-parallel">Parallel</span>'}
+        <span class="badge" style="background: var(--bg-secondary); color: var(--text-secondary);">${epic.priority}</span>
+      </div>
+      <div class="card-meta">JTBD: ${epic.jtbd} &middot; Target: ${epic.evalTargets}</div>
+      ${epic.tasks.map(t => `
+        <div style="padding: 8px 0 8px 16px; border-left: 2px solid var(--border-light); margin-left: 8px; margin-top: 8px;">
+          <div style="font-weight: 500; font-size: 14px;">${t.title}</div>
+          <div style="font-size: 12px; color: var(--text-muted);">Eval: ${t.evalSpec} &middot; Done when: ${t.doneWhen}</div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+{
+  "projectName": "Continuous Improvements",
+  "projectSlug": "continuous-improvements",
+  "projectPath": "/Users/michaelhaase/AI/Projects/strategies/continuous-improvements",
+  "currentPhase": 1,
+  "completedPhases": [],
+  "startedAt": "2026-03-27T00:00:00Z",
+  "lastUpdated": "2026-03-27T00:00:00Z",
+  "upstreamInputs": {
+    "strategyParsed": true,
+    "archetypeParsed": true,
+    "shortCircuited": false,
+    "vision": "Every product I build gets better on its own, every day. I spend my time having ideas and giving feedback. The system handles the rest.",
+    "whereToPlay": "Solo builder (Michael) running 5-10 personal products, each with workstream-level continuous improvement loops, orchestrated via Discord and the build system pipeline.",
+    "principles": ["Autonomy over Control", "Seamless Entry, Enriched Output", "Cognitive Peace over Speed", "Learning Evals over Fixed Evals"],
+    "jtbdNow": ["Capture ideas instantly", "Enrich ideas through conversation", "Execute experiments on a heartbeat", "Review results with confidence"],
+    "proposedApproach": {
+      "name": "The Native Loop",
+      "formFactor": "Claude Code skills + Discord Channels + Scheduled Agent + Supabase + Next.js Dashboard",
+      "howToWin": "The only system where a sentence in Discord becomes a tested, measured, shipped improvement by morning — with zero infrastructure outside Claude Code, Vercel, and Supabase.",
+      "jtbdConnections": [
+        "Capture: Discord Channels — type a sentence, Claude Code picks it up",
+        "Enrich: Sparring in Discord thread — clarifying questions, eval mapping",
+        "Execute: Scheduled remote agent at 5am — Ralph Wiggum loop",
+        "Review: Persistent Next.js dashboard on Vercel, reading from Supabase"
+      ]
+    },
+    "boundaries": {
+      "noGos": [
+        "No separate Discord bot deployment",
+        "No cross-product learning in V1",
+        "No multi-user features",
+        "No real-time execution",
+        "No capture UI beyond Discord",
+        "No duplication of evals"
+      ],
+      "constraints": [
+        "Claude Code Channels must support async Discord listening",
+        "Scheduled remote agent requires Claude Code Max",
+        "Each workstream needs evals from stage 3",
+        "Supabase free tier limits"
+      ]
+    }
+  },
+  "behavioralEvals": [],
+  "leadingIndicators": { "primary": [], "secondary": [] },
+  "guardrailEvals": []
+}
