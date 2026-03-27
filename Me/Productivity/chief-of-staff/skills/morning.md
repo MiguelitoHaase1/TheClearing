@@ -29,17 +29,22 @@ Pass the target date as the time range (start of day to end of day).
 
 If the Calendar API is unavailable, note "Calendar data unavailable" and proceed with what you have.
 
-### 2. Gather the target day's tasks
+### 2. Gather tasks (today + deferred)
 
-Fetch tasks from Supabase via the `td` CLI:
+Fetch **all open tasks** from Supabase in a single query:
 
 ```bash
 SUPABASE_URL=https://xwxsrsybllifbivhgojl.supabase.co \
 SUPABASE_KEY=sb_publishable_fcZRHJWzxFYrwfQVmTy0GQ_6DVu0Byk \
-npx tsx ~/AI/Products/todolist/src/cli.ts list --due <TARGET_DATE> --json
+npx tsx ~/AI/Products/todolist/src/cli.ts list --json
 ```
 
-Replace `<TARGET_DATE>` with the target date in YYYY-MM-DD format. For today use `--today` instead of `--due`.
+This returns all open tasks. **Split them into two buckets:**
+
+- **Today's tasks** — `due_date` equals the target date. These go into the day plan (Steps 7-8).
+- **Deferred tasks** — everything else: `due_date` is after the target date, OR `due_date` is null. These go into the deferred section (Step 10).
+
+Overdue tasks (`due_date` before today) should be included in **today's tasks** — they need attention.
 
 **Map Supabase tasks to TodoistTask objects** for downstream processing:
 
@@ -53,6 +58,17 @@ Replace `<TARGET_DATE>` with the target date in YYYY-MM-DD format. For today use
 | (not available) | `labels` | Use `[]` (empty array) |
 
 **Priority mapping**: Supabase uses 0=critical, 4=backlog. The planning system uses 4=urgent, 1=normal. Convert: P0→4, P1→3, P2→2, P3→1, P4→1.
+
+**Map deferred Supabase tasks to DeferredTask objects** (from `src/render-morning-brew.ts`):
+
+| Supabase field | DeferredTask field | Mapping |
+|---------------|-------------------|---------|
+| `id` | `taskId` | Use as-is |
+| `title` | `label` | Use as-is |
+| `priority` | `priority` | `4 - supabasePriority` (min 1) — same mapping |
+| `description` | `description` | Use as-is |
+| `due_date` | `suggestedDate` | Use as-is (may be null) |
+| (generated) | `reason` | Brief note: "Due [date]" or "No due date" |
 
 If the Supabase API is unavailable, note "Task data unavailable" and proceed with what you have.
 
@@ -83,11 +99,12 @@ Output a brief overview of the raw material for the target day:
 - [HH:MM]–[HH:MM] [Event summary]
 → [X]h of meetings, [Y]h of open time
 
-### Tasks ([N] due)
+### Tasks ([N] due today, [M] deferred)
 - [P1] [Task title] — [one-line context if useful]
 - [P2] [Task title]
 - [P3] [Task title]
-(Show up to ~8 highest-priority tasks. If more exist, note "+ [N] more tasks")
+(Show up to ~8 highest-priority tasks due today. If more exist, note "+ [N] more tasks")
+(Deferred tasks are shown separately in the Morning Brew — no need to list them here)
 
 ### Historical thread
 [1-2 sentences: what was the priority yesterday, what momentum exists, any patterns from context.md. Or "First session — no history yet."]
@@ -154,7 +171,7 @@ Use the `appendToSection` function from `src/context.ts` or directly write to th
 
 ### 7. Propose day plan
 
-Now that you have a priority, calendar events, and tasks, propose a day schedule. Use the helper functions from `src/morning-helpers.ts`:
+Now that you have a priority, calendar events, and **today's tasks** (not deferred), propose a day schedule. Use the helper functions from `src/morning-helpers.ts`:
 
 1. **Identify open time windows** using `identifyOpenSlots(events)`. This finds gaps between calendar events within working hours (08:00–22:00), automatically excluding the **family time block (17:00–19:30)** which is protected. This creates two work windows: daytime (08:00–17:00) and evening (19:30–22:00). The evening window is good for lighter or personal tasks. Alternatively, use `mcp__claude_ai_Google_Calendar__gcal_find_my_free_time` for additional free-time data.
 
@@ -255,7 +272,7 @@ After producing the day plan, generate a Morning Brew HTML page that Michael can
 2. **Build a `MorningBrewPlan` object** (from `src/render-morning-brew.ts`):
 
 ```typescript
-import { renderMorningBrew, type MorningBrewPlan, type NarrativeTaskSlot } from "./src/render-morning-brew.ts";
+import { renderMorningBrew, type MorningBrewPlan, type NarrativeTaskSlot, type DeferredTask } from "./src/render-morning-brew.ts";
 
 const brewPlan: MorningBrewPlan = {
   date: "YYYY-MM-DD",
@@ -270,8 +287,16 @@ const brewPlan: MorningBrewPlan = {
   calendarEvents: [
     // { summary, start, end, location? } for each calendar event
   ],
+  deferredTasks: [
+    // Deferred tasks from Step 2 — tasks NOT due today, shown in a separate section.
+    // Map each to: { taskId, label, priority, description?, suggestedDate?, reason }
+    // Sort by priority descending (4=urgent first). The renderer handles the UI.
+    // Keep this lightweight: label + priority + date. No enrichment needed for deferred tasks.
+  ],
 };
 ```
+
+**Deferred section UX (guard-001):** The deferred section is collapsed-by-default cards — it shows task count and priority badges but doesn't compete with the main timeline. Keep it lightweight: no enrichment, no time assignments, no category labels. Just what's waiting.
 
 3. **Render the HTML** using `renderMorningBrew(brewPlan)`.
 
