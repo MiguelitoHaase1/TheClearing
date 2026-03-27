@@ -217,6 +217,57 @@ Reason: [the reason]
 
 Use the `appendToSection` function from `src/context.ts` or directly write to the file, inserting the entry under `## Priorities` before the next `##` header.
 
+### 6b. Priority challenge (devil's advocate)
+
+After persisting the priority, **optionally** generate 1-2 brief challenges that question the chosen priority. This is a devil's advocate mechanism — it should feel like a sharp observation, not an interrogation.
+
+**When to generate (NOT every session):**
+- The chosen priority conflicts with a deferred high-priority task
+- There's a calendar event tomorrow that requires prep today
+- A reflection or feedback entry in context.md contradicts the choice
+- The tunnel vision check (Step 3b) flagged a pattern
+
+**When to skip:** If the priority aligns well with the task landscape and no contradictions are visible, skip entirely. Say nothing. Challenges should appear in roughly 30-50% of sessions, not every time.
+
+**Challenge format (1-2 sentences max):**
+
+```
+💡 "[Observation that references 2+ sources — e.g., backlog task + calendar event, or reflection + deferred task]"
+```
+
+Example: *"Your investor deck has been deferred 3 times and the board meeting is Thursday. Today's priority is CRM — deliberate choice or avoidance?"*
+
+**Rules:**
+- Each challenge MUST reference 2+ context sources (backlog, reflections, calendar, relationships, deferred tasks)
+- Never generic ("have you considered other tasks?"). Always specific to Michael's actual situation
+- Non-blocking: show the challenge, then immediately proceed to Step 7. No response required
+- Do NOT re-propose alternatives. Michael already chose. This is a perspective check, not a re-vote
+
+### 6c. Relationship detection
+
+Before building the day plan, scan today's tasks for connections:
+
+1. **Query existing links**: Run `td show <id> --json` for each today's task (or batch via `td list --json`). Check if any tasks already have `links` in the output.
+
+2. **AI-detect new connections**: Look across today's tasks + deferred tasks for patterns:
+   - Two tasks touching the same project/topic from different angles
+   - A task that is a prerequisite for another
+   - Tasks that would benefit from being done together (batching)
+
+3. **Propose connections (only when confident):**
+
+```
+🔗 Connection spotted:
+"[Task A]" and "[Task B]" both touch [shared topic].
+→ Consider doing them back-to-back, or linking: td link <a> <b> --type=related
+```
+
+**Rules:**
+- Precision over recall. Better to miss a connection than surface a false one
+- Max 2 proposals per session. More than that adds process weight (guard-001)
+- Wait for Michael's response before creating links. Propose, don't execute
+- If no connections are detected, skip silently. No "no connections found" message
+
 ### 7. Propose day plan
 
 Now that you have a priority, calendar events, and **today's tasks** (not deferred), propose a day schedule. Use the helper functions from `src/morning-helpers.ts`:
