@@ -240,8 +240,10 @@ Example: *"Your investor deck has been deferred 3 times and the board meeting is
 **Rules:**
 - Each challenge MUST reference 2+ context sources (backlog, reflections, calendar, relationships, deferred tasks)
 - Never generic ("have you considered other tasks?"). Always specific to Michael's actual situation
-- Non-blocking: show the challenge, then immediately proceed to Step 7. No response required
+- Non-blocking: show the challenge, then immediately proceed to Step 6c/7. No response required
 - Do NOT re-propose alternatives. Michael already chose. This is a perspective check, not a re-vote
+- Actionable in under 30 seconds — Michael can reprioritize or confirm with a word
+- Visually subtle in Morning Brew: render as a muted italic line below the priority card, not a banner or alert
 
 ### 6c. Relationship detection
 
@@ -262,11 +264,37 @@ Before building the day plan, scan today's tasks for connections:
 → Consider doing them back-to-back, or linking: td link <a> <b> --type=related
 ```
 
+4. **Detect near-duplicates and propose merges:**
+
+If two tasks have substantially overlapping titles or descriptions (same deliverable, different phrasing), propose a merge:
+
+```
+🔀 Possible duplicate:
+  A: "[Task title A]" (P2, due tomorrow)
+  B: "[Task title B]" (P3, no date)
+→ Suggested merge: "[Combined title]"
+  Reply "merge" to combine, or "keep both" to skip.
+```
+
+If Michael says "merge": mark the lower-priority task as done in Supabase (`td done <id>`) and update the surviving task's description to capture any unique context from the removed one.
+
+5. **Propose sequencing when order matters:**
+
+If one task is a prerequisite for another (e.g., "design API" before "implement API"), suggest sequencing:
+
+```
+📋 Sequence suggestion: Do "[Task A]" before "[Task B]" — [reason].
+→ I'll schedule them in order in the day plan.
+```
+
+No confirmation needed for sequencing — just apply it in Step 7's slot assignment.
+
 **Rules:**
 - Precision over recall. Better to miss a connection than surface a false one
-- Max 2 proposals per session. More than that adds process weight (guard-001)
-- Wait for Michael's response before creating links. Propose, don't execute
+- Max 2 proposals per session (connections + merges + sequences combined). More adds process weight (guard-001)
+- Wait for Michael's response before creating links or merging. Propose, don't execute
 - If no connections are detected, skip silently. No "no connections found" message
+- Merges are reversible: the "removed" task is marked done, not deleted
 
 ### 7. Propose day plan
 
