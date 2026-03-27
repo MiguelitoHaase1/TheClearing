@@ -39,14 +39,16 @@ export interface TimelineEvent {
   colorId?: string;
 }
 
-/** A task deferred to a future date, with its Todoist priority for sorting. */
+/** A task deferred to a future date, with priority for sorting. */
 export interface DeferredTask {
   label: string;
-  /** Todoist priority: 4 = urgent (P1), 3 = high (P2), 2 = medium (P3), 1 = normal (P4). */
+  /** Planning priority: 4 = urgent (P1), 3 = high (P2), 2 = medium (P3), 1 = normal (P4). */
   priority: number;
   description?: string;
   suggestedDate?: string;
   reason?: string;
+  /** Supabase task UUID — required for write-back (done, defer, reprioritize). */
+  taskId?: string;
 }
 
 /** A single item in an exercise block (strength exercise, family activity, or yoga pose). */
@@ -302,8 +304,10 @@ function renderTimeline(plan: MorningBrewPlan): string {
         ? `<div class="timeline-enrichment" data-enrichment-index="${idx}">${enrichmentContent}</div>`
         : "";
 
+      const taskIdAttr = item.taskId ? ` data-task-id="${escapeHtml(item.taskId)}"` : "";
+
       return `
-        <div class="timeline-item timeline-task"${categoryAttr}${startAttr}${endAttr} style="${heightStyle}" data-item-index="${idx}">
+        <div class="timeline-item timeline-task"${categoryAttr}${startAttr}${endAttr}${taskIdAttr} style="${heightStyle}" data-item-index="${idx}">
           <div class="timeline-time">${timeStr}</div>
           <div class="timeline-content"><div class="timeline-label">${escapeHtml(item.label)}</div></div>
           <div class="timeline-actions"><input type="checkbox" class="item-check" data-index="${idx}" aria-label="Done"><button class="item-skip" data-index="${idx}" aria-label="Skip">&times;</button></div>
@@ -366,14 +370,17 @@ function renderDeferredSection(tasks: DeferredTask[]): string {
         ? `<div class="deferred-reason">${escapeHtml(task.reason)}</div>`
         : "";
 
+      const taskIdAttr = task.taskId ? ` data-task-id="${escapeHtml(task.taskId)}"` : "";
+      const sbPriority = Math.max(0, 4 - task.priority); // planning→supabase: 4→0, 3→1, 2→2, 1→3
+
       return `
-      <div class="deferred-card" data-item-index="${idx}" data-deferred="true">
+      <div class="deferred-card" data-item-index="${idx}" data-deferred="true"${taskIdAttr} data-sb-priority="${sbPriority}">
         <div class="deferred-header" data-deferred-toggle="${idx}">
           <div class="deferred-actions">
             <input type="checkbox" class="item-check" data-index="${idx}" aria-label="Done">
             <button class="item-skip" data-index="${idx}" aria-label="Skip">&times;</button>
           </div>
-          <span class="deferred-badge" style="background:${color}">${badge}</span>
+          <span class="deferred-badge" data-index="${idx}" style="background:${color}">${badge}</span>
           <div class="deferred-label">${escapeHtml(task.label)}</div>
           ${dateStr}
           <svg class="deferred-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
@@ -1018,6 +1025,21 @@ export function renderMorningBrew(plan: MorningBrewPlan): string {
         .catch(function() { showSync('Offline - saved locally', ''); });
     }
 
+    // Write-back to the tasks table (done, defer, reprioritize)
+    function sbTaskPatch(taskId, data) {
+      if (!taskId) return;
+      fetch(SB_URL + '/rest/v1/tasks?id=eq.' + taskId, {
+        method: 'PATCH',
+        headers: Object.assign({}, SB_HEADERS, { 'Prefer': 'return=minimal' }),
+        body: JSON.stringify(data)
+      }).catch(function() { /* tasks write-back is best-effort */ });
+    }
+
+    function getTaskId(el) {
+      var item = el.closest('[data-task-id]');
+      return item ? item.dataset.taskId : null;
+    }
+
     function sbLoad() {
       showSync('Loading...', 'syncing');
       return fetch(SB_URL + '/rest/v1/morning_brew_status?brew_date=eq.' + DATE_KEY, { headers: SB_HEADERS })
@@ -1099,11 +1121,23 @@ export function renderMorningBrew(plan: MorningBrewPlan): string {
       var noteExpand = el.querySelector('.note-expand');
 
       if (check) check.addEventListener('change', function() {
-        setState(idx, 'status', check.checked ? 'done' : null);
+        var isDone = check.checked;
+        setState(idx, 'status', isDone ? 'done' : null);
+        var tid = getTaskId(check);
+        if (tid) sbTaskPatch(tid, { status: isDone ? 'done' : 'open' });
       });
       if (skip) skip.addEventListener('click', function() {
         var cur = (itemState[idx] || {}).status;
-        setState(idx, 'status', cur === 'skip' ? null : 'skip');
+        var newStatus = cur === 'skip' ? null : 'skip';
+        setState(idx, 'status', newStatus);
+        // Skip = defer: push due_date +7 days
+        if (newStatus === 'skip') {
+          var tid = getTaskId(skip);
+          if (tid) {
+            var d = new Date(); d.setDate(d.getDate() + 7);
+            sbTaskPatch(tid, { due_date: d.toISOString().slice(0, 10) });
+          }
+        }
       });
       if (noteToggle) {
         noteToggle.addEventListener('click', function() { openNoteModal(idx); });
@@ -1304,10 +1338,30 @@ export function renderMorningBrew(plan: MorningBrewPlan): string {
     priorityEl.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); priorityEl.blur(); } });
     reasonEl.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); reasonEl.blur(); } });
 
+    // --- Deferred priority badge click (reprioritize) ---
+    var SB_PRIORITY_LABELS = ['P0','P1','P2','P3','P4'];
+    var SB_PRIORITY_COLORS = ['#D32F2F','#E65100','#1565C0','#757575','#BDBDBD'];
+    document.querySelectorAll('.deferred-badge[data-index]').forEach(function(badge) {
+      badge.style.cursor = 'pointer';
+      badge.title = 'Click to change priority';
+      badge.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var card = badge.closest('.deferred-card');
+        if (!card) return;
+        var tid = card.dataset.taskId;
+        var cur = parseInt(card.dataset.sbPriority) || 0;
+        var next = (cur + 1) % 5;
+        card.dataset.sbPriority = next;
+        badge.textContent = SB_PRIORITY_LABELS[next];
+        badge.style.background = SB_PRIORITY_COLORS[next];
+        if (tid) sbTaskPatch(tid, { priority: next });
+      });
+    });
+
     // --- Deferred card expand/collapse ---
     document.querySelectorAll('[data-deferred-toggle]').forEach(function(header) {
       header.addEventListener('click', function(e) {
-        if (e.target.closest('.item-check, .item-skip')) return;
+        if (e.target.closest('.item-check, .item-skip, .deferred-badge')) return;
         var idx = header.dataset.deferredToggle;
         var card = header.closest('.deferred-card');
         var detail = document.querySelector('[data-deferred-detail="' + idx + '"]');
