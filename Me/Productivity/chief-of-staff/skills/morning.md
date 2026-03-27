@@ -31,6 +31,31 @@ If the Calendar API is unavailable, note "Calendar data unavailable" and proceed
 
 ### 2. Gather tasks (today + deferred)
 
+**Check `TASK_BACKEND` env var** to determine the data source. Default is `supabase`.
+
+---
+
+<details>
+<summary><strong>If TASK_BACKEND=todoist</strong> (fallback mode)</summary>
+
+Call the Todoist MCP tool to get tasks due on the **target date**:
+
+```
+Use mcp__todoist__todoist_task_get to retrieve tasks due on the target date.
+Include priority levels, labels, and descriptions.
+For tomorrow: use filter "tomorrow". For today: use filter "today".
+```
+
+Todoist tasks are already in TodoistTask format (priority 1-4, content, labels, due.date). No mapping needed. Deferred tasks are not available in this mode — omit the deferred section from the brew.
+
+If the Todoist API is unavailable, note "Task data unavailable" and proceed with what you have.
+
+</details>
+
+---
+
+**Default (TASK_BACKEND=supabase or unset):**
+
 Fetch **all open tasks** from Supabase in a single query:
 
 ```bash
@@ -465,6 +490,7 @@ Include these entries in the context with higher weight -- they represent explic
 - **One priority only.** If you feel torn between two, pick one and mention the runner-up in the "Context considered" section.
 - **No scoring algorithms.** You are the reasoning engine. Read the data, think, decide.
 - **Graceful degradation.** If Calendar or Supabase is down, say so and work with what you have.
+- **Task backend toggle.** `TASK_BACKEND=todoist` restores full Todoist behavior (reads via MCP, no deferred section). Default is `supabase`. Switching is instant — no migration needed.
 - **No automation.** This skill runs only when Michael types /morning. Never suggest scheduling it.
 - **Calendar: write-only after approval.** Before approval, the day plan is read-only (no calendar writes). After approval and confirmation, create new events only. Never update or delete existing events (RH-1).
 - **Single generation.** The day plan is generated once per /morning invocation. No mid-day refreshes.
