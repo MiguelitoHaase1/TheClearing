@@ -108,6 +108,29 @@ Read the file `context/context.md` from the project root (`~/AI/Me/Productivity/
 
 If the file is empty or has no entries yet, this is the first morning session. Base priority on tasks and calendar alone.
 
+### 3b. Tunnel vision check
+
+After reading context.md, scan the **## Priorities** section for the last 3-5 entries. If the same P1 topic (same project, same problem area, or same framing) has been the priority for **3+ consecutive days**, surface this as a brief observation in Step 4's snapshot.
+
+**Detection heuristic:**
+- Compare the `Priority:` lines from the last 3-5 sessions
+- If 3+ consecutive entries share the same core topic (e.g., "CRM data model", "Todoist migration", "investor deck"), flag it
+- Fuzzy match: same keywords or same project name counts, not just exact string match
+
+**When detected, add to the snapshot (Step 4a):**
+
+```
+### ⚠️ Focus Pattern
+Same priority area for [N] consecutive days: "[topic]"
+Consider: are there neglected high-priority tasks in other areas?
+```
+
+Then, when proposing options in Step 4b, **ensure at least one of the three options is from a different area** — draw from deferred tasks, stale high-priority items, or calendar-driven obligations that have been overshadowed.
+
+**When NOT detected:** Skip this section entirely. Do not mention it. No tunnel vision = no observation needed.
+
+**Guardrail:** This is a nudge, not a mandate. Michael can still pick the same area. The check ensures he sees the pattern.
+
 ### 4. Present the day snapshot and priority options
 
 First, present a concise snapshot of what the **target day** looks like, then propose 3 distinct purpose options for Michael to choose from.
