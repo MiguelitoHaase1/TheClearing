@@ -214,6 +214,55 @@ describe("guard-001: CLAUDE.md must not contain eval content", () => {
 // ── CLAUDE.md Template Quality ─────────────────────────────────────────
 
 describe("claudeTemplate quality", () => {
+  it("includes idea capture flow", () => {
+    const ws = {
+      name: "Test",
+      slug: "test",
+      description: "Test workstream",
+      jtbds: ["Test job"],
+      eval_ids: ["eval-001"],
+    };
+    const content = claudeTemplate(ws, "../../evals.json");
+
+    expect(content).toContain("## Idea Capture");
+    expect(content).toContain("Acknowledge");
+    expect(content).toContain("thread");
+  });
+
+  it("includes sparring flow with clarifying questions", () => {
+    const ws = {
+      name: "Test",
+      slug: "test",
+      description: "Test workstream",
+      jtbds: ["Test job"],
+      eval_ids: ["eval-001"],
+    };
+    const content = claudeTemplate(ws, "../../evals.json");
+
+    expect(content).toContain("## Sparring Flow");
+    expect(content).toContain("clarifying questions");
+    expect(content).toContain("goal.md");
+    expect(content).toContain("eval IDs");
+    expect(content).toContain("guard-001");
+  });
+
+  it("includes hypothesis graduation flow", () => {
+    const ws = {
+      name: "Test",
+      slug: "test",
+      description: "Test workstream",
+      jtbds: ["Test job"],
+      eval_ids: ["eval-001"],
+    };
+    const content = claudeTemplate(ws, "../../evals.json");
+
+    expect(content).toContain("## Hypothesis Graduation");
+    expect(content).toContain("ideas-backlog.md");
+    expect(content).toContain("Problem statement");
+    expect(content).toContain("Expected delta");
+    expect(content).toContain("status: queued");
+  });
+
   it("includes experiment workflow steps", () => {
     const ws = {
       name: "Test",
