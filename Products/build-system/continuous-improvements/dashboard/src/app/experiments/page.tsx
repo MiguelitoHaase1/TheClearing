@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { RevertButton } from "./revert-button";
 
 export const dynamic = "force-dynamic";
 
@@ -157,19 +158,24 @@ export default async function ExperimentsPage({ searchParams }: PageProps) {
                       )}
                     </p>
                   </div>
-                  <span
-                    className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                      exp.status === "shipped"
-                        ? "bg-green-900/30 text-green-400"
-                        : exp.status === "rejected"
-                          ? "bg-red-900/30 text-red-400"
-                          : exp.status === "reverted"
-                            ? "bg-orange-900/30 text-orange-400"
-                            : "bg-yellow-900/30 text-yellow-400"
-                    }`}
-                  >
-                    {exp.status}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                        exp.status === "shipped"
+                          ? "bg-green-900/30 text-green-400"
+                          : exp.status === "rejected"
+                            ? "bg-red-900/30 text-red-400"
+                            : exp.status === "reverted"
+                              ? "bg-orange-900/30 text-orange-400"
+                              : "bg-yellow-900/30 text-yellow-400"
+                      }`}
+                    >
+                      {exp.status}
+                    </span>
+                    {exp.status === "shipped" && (
+                      <RevertButton experimentId={exp.id} />
+                    )}
+                  </div>
                 </div>
 
                 {exp.qualitative_description && (
