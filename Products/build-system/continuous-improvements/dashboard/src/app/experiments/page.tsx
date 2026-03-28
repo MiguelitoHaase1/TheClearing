@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { RevertButton } from "./revert-button";
+import { FeedbackForm } from "./feedback-form";
 
 export const dynamic = "force-dynamic";
 
@@ -184,6 +185,17 @@ export default async function ExperimentsPage({ searchParams }: PageProps) {
                   </p>
                 )}
 
+                {exp.branch && (
+                  <a
+                    href={`https://github.com/MiguelitoHaase1/TheClearing/tree/${exp.branch}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-accent hover:underline"
+                  >
+                    Try it →
+                  </a>
+                )}
+
                 {deltas.length > 0 && (
                   <table className="w-full text-xs mt-2">
                     <thead className="text-muted uppercase tracking-wide">
@@ -221,6 +233,10 @@ export default async function ExperimentsPage({ searchParams }: PageProps) {
                       ))}
                     </tbody>
                   </table>
+                )}
+
+                {exp.status === "shipped" && (
+                  <FeedbackForm experimentId={exp.id} />
                 )}
               </div>
             );

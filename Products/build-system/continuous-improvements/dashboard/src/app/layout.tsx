@@ -48,6 +48,12 @@ export default function RootLayout({
           >
             Experiments
           </Link>
+          <Link
+            href="/trends"
+            className="px-3 py-2 rounded-md text-sm hover:bg-accent-muted transition-colors"
+          >
+            Trends
+          </Link>
           <div className="mt-auto pt-4 border-t border-border">
             <p className="text-xs text-muted px-3">
               Continuous Improvements
