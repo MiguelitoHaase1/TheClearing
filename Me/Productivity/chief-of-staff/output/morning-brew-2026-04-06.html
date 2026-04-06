@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Morning Brew — Monday, April 6 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --coral:      #D97757;
+      --coral-light:#F2C4B0;
+      --coral-dim:  #C0654A;
+      --cream:      #FAF9F6;
+      --cream-dark: #F0EDE6;
+      --ink:        #1A1814;
+      --ink-muted:  #6B6560;
+      --ink-faint:  #B8B3AE;
+      --card:       #FFFFFF;
+      --border:     #E8E3DC;
+      --green:      #3D8B5E;
+      --green-bg:   #EAF5EE;
+      --amber:      #B87A2E;
+      --amber-bg:   #FBF0DC;
+      --blue:       #2E6CB8;
+      --blue-bg:    #EAF0FB;
+      --purple:     #7C4DB8;
+      --purple-bg:  #F2EBF9;
+      --now-line:   #D97757;
+      --radius:     10px;
+      --shadow:     0 1px 4px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.04);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .header-date {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 4px;
+    }
+    .header-title {
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+    .header-badge {
+      background: var(--coral);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+    .priority-strip {
+      background: var(--cream-dark);
+      border: 1.5px solid var(--coral-light);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .priority-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--coral-dim);
+      flex-shrink: 0;
+    }
+    .priority-text {
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      cursor: text;
+    }
+    .priority-text:focus {
+      background: white;
+      border-radius: 4px;
+      padding: 2px 6px;
+    }
+    .priority-edit-hint {
+      font-size: 11px;
+      color: var(--ink-faint);
+      flex-shrink: 0;
+    }
+    .tab-bar {
+      display: flex;
+      gap: 0;
+      border-top: 1px solid var(--border);
+    }
+    .tab {
+      flex: 1;
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--ink-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+    .tab:hover { color: var(--coral); }
+    .tab.active {
+      color: var(--coral);
+      border-bottom-color: var(--coral);
+    }
+    .main {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 16px 16px 80px;
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .section { margin-bottom: 20px; }
+    .section-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 8px;
+      padding-left: 2px;
+    }
+    .timeline { position: relative; }
+    .timeline-ruler {
+      position: absolute;
+      left: 42px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--border);
+    }
+    .now-line {
+      position: absolute;
+      left: 30px;
+      right: 0;
+      height: 2px;
+      background: var(--now-line);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+    }
+    .now-line::before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 8px;
+      background: var(--now-line);
+      border-radius: 50%;
+      position: absolute;
+      left: -4px;
+    }
+    .now-line-label {
+      position: absolute;
+      left: 14px;
+      top: -9px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--now-line);
+      background: var(--cream);
+      padding: 0 3px;
+    }
+    .time-slot {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 4px;
+      position: relative;
+    }
+    .time-label {
+      width: 38px;
+      flex-shrink: 0;
+      text-align: right;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--ink-faint);
+      padding-top: 11px;
+      line-height: 1;
+    }
+    .time-content { flex: 1; min-width: 0; }
+    .task-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      margin-bottom: 4px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      transition: box-shadow 0.15s, opacity 0.2s;
+    }
+    .task-card:hover { box-shadow: var(--shadow); }
+    .task-card.done { opacity: 0.45; }
+    .task-card.done .task-title { text-decoration: line-through; }
+    .task-card.direct  { border-left: 3px solid var(--coral); }
+    .task-card.indirect { border-left: 3px solid var(--blue); }
+    .task-card.obligation { border-left: 3px solid var(--amber); }
+    .task-card.exercise { border-left: 3px solid var(--purple); background: var(--purple-bg); }
+    .task-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .task-checkbox:hover { border-color: var(--coral); }
+    .task-checkbox.checked { background: var(--coral); border-color: var(--coral); }
+    .task-checkbox.checked::after {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 1px;
+      width: 8px;
+      height: 5px;
+      border-left: 2px solid white;
+      border-bottom: 2px solid white;
+      transform: rotate(-45deg);
+    }
+    .task-body { flex: 1; min-width: 0; }
+    .task-time-range {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 2px;
+    }
+    .task-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.35;
+    }
+    .task-detail {
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-top: 4px;
+      line-height: 1.45;
+    }
+    .task-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 6px;
+    }
+    .tag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 10px;
+      letter-spacing: 0.04em;
+    }
+    .tag.p0 { background: #FDECEA; color: #C0392B; }
+    .tag.p1 { background: var(--amber-bg); color: var(--amber); }
+    .tag.p2 { background: var(--blue-bg); color: var(--blue); }
+    .tag.p3 { background: var(--cream-dark); color: var(--ink-muted); }
+    .tag.cat-direct { background: #FFF0EB; color: var(--coral-dim); }
+    .tag.cat-indirect { background: var(--blue-bg); color: var(--blue); }
+    .tag.cat-exercise { background: var(--purple-bg); color: var(--purple); }
+    .protected-block {
+      background: var(--green-bg);
+      border: 1px solid #A8D5B5;
+      border-left: 3px solid var(--green);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .protected-label { font-size: 14px; font-weight: 600; color: var(--green); }
+    .protected-sub { font-size: 12px; color: var(--green); opacity: 0.8; }
+    .empty-state {
+      text-align: center;
+      padding: 28px 16px;
+      color: var(--ink-faint);
+      font-size: 13px;
+    }
+    .empty-icon { font-size: 28px; margin-bottom: 8px; }
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-muted);
+      background: var(--cream-dark);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .copy-btn:hover { background: var(--coral-light); color: var(--coral-dim); }
+    .copy-btn.copied { background: var(--green-bg); color: var(--green); }
+    .reflection-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 8px;
+    }
+    .reflection-prompt { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+    .reflection-input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--ink);
+      background: var(--cream);
+      resize: vertical;
+      min-height: 70px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .reflection-input:focus { border-color: var(--coral); }
+    .reflection-save {
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: white;
+      background: var(--coral);
+      border: none;
+      border-radius: 6px;
+      padding: 6px 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .reflection-save:hover { background: var(--coral-dim); }
+    .sync-bar {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ink);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 20px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .sync-bar.show { opacity: 1; }
+    @media (min-width: 540px) {
+      .header { padding: 24px 24px 0; }
+      .main { padding: 20px 24px 80px; }
+    }
+    @media print {
+      .tab-bar, .sync-bar { display: none; }
+      .tab-panel { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-date">Monday · April 6 2026</div>
+      <div class="header-title">Morning Brew</div>
+    </div>
+    <span class="header-badge">Day A</span>
+  </div>
+  <div class="priority-strip">
+    <span class="priority-label">Today's Priority</span>
+    <input class="priority-text" id="priorityInput" value="Start week with clear focus" title="Click to edit priority" maxlength="80" />
+    <span class="priority-edit-hint" id="priorityHint">tap to edit</span>
+  </div>
+  <div class="tab-bar">
+    <div class="tab active" data-tab="today">Today</div>
+    <div class="tab" data-tab="evening">Evening</div>
+    <div class="tab" data-tab="deferred">Deferred</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- TODAY -->
+  <div class="tab-panel active" id="tab-today">
+
+    <div class="section">
+      <div class="section-title">Calendar</div>
+      <div class="empty-state">
+        <div class="empty-icon">📅</div>
+        No calendar events — enjoy an open day.
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>Day Plan</span>
+        <button class="copy-btn" id="copyPlanBtn" onclick="copyPlan()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy plan
+        </button>
+      </div>
+
+      <div class="timeline" id="timeline">
+        <div class="timeline-ruler"></div>
+        <div class="now-line" id="nowLine" style="top:0px">
+          <span class="now-line-label" id="nowLabel">now</span>
+        </div>
+
+        <div class="time-slot">
+          <div class="time-label">07:30</div>
+          <div class="time-content">
+            <div class="task-card exercise" data-task-id="ex-morning">
+              <div class="task-checkbox" onclick="toggleTask(this,'ex-morning')"></div>
+              <div class="task-body">
+                <div class="task-time-range">07:30 – 08:00</div>
+                <div class="task-title">Strength + Meditation · Day A</div>
+                <div class="task-detail">Goblet squats → back squat warm-up, bench press or OHP, plank series. Close with 5 min seated breath meditation.</div>
+                <div class="task-tags"><span class="tag cat-exercise">exercise</span><span class="tag p3">30 min</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="time-slot">
+          <div class="time-label">08:00</div>
+          <div class="time-content">
+            <div class="task-card direct" data-task-id="task-intentions">
+              <div class="task-checkbox" onclick="toggleTask(this,'task-intentions')"></div>
+              <div class="task-body">
+                <div class="task-time-range">08:00 – 08:30</div>
+                <div class="task-title">Weekly intentions & task triage</div>
+                <div class="task-detail">Review open tasks, set 3 weekly wins, clear inbox. Monday momentum starts here.</div>
+                <div class="task-tags"><span class="tag cat-direct">direct</span><span class="tag p1">high</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="time-slot">
+          <div class="time-label">08:30</div>
+          <div class="time-content">
+            <div class="task-card direct" data-task-id="task-deep-1">
+              <div class="task-checkbox" onclick="toggleTask(this,'task-deep-1')"></div>
+              <div class="task-body">
+                <div class="task-time-range">08:30 – 11:00</div>
+                <div class="task-title">Deep work block I</div>
+                <div class="task-detail">Prime morning energy window. Phone on silent, notifications off. Focus on your single most important project. No meetings, no Slack.</div>
+                <div class="task-tags"><span class="tag cat-direct">direct</span><span class="tag p0">urgent</span><span class="tag p3">2.5 hr</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="time-slot">
+          <div class="time-label">11:00</div>
+          <div class="time-content">
+            <div class="task-card indirect" data-task-id="task-comms">
+              <div class="task-checkbox" onclick="toggleTask(this,'task-comms')"></div>
+              <div class="task-body">
+                <div class="task-time-range">11:00 – 11:45</div>
+                <div class="task-title">Comms & correspondence</div>
+                <div class="task-detail">Process email, reply to pending messages, update stakeholders. Batch replies.</div>
+                <div class="task-tags"><span class="tag cat-indirect">indirect</span><span class="tag p2">medium</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="time-slot">
+          <div class="time-label">12:00</div>
+          <div class="time-content">
+            <div class="task-card obligation" data-task-id="task-lunch">
+              <div class="task-checkbox" onclick="toggleTask(this,'task-lunch')"></div>
+              <div class="task-body">
+                <div class="task-time-range">12:00 – 13:00</div>
+                <div class="task-title">Lunch break</div>
+                <div class="task-detail">Step away from the screen. Walk if possible.</div>
+                <div class="task-tags"><span class="tag p3">break</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="time-slot">
+          <div class="time-label">13:00</div>
+          <div class="time-content">
+            <div class="task-card direct" data-task-id="task-deep-2">
+              <div class="task-checkbox" onclick="toggleTask(this,'task-deep-2')"></div>
+              <div class="task-body">
+                <div class="task-time-range">13:00 – 15:30</div>
+                <div class="task-title">Deep work block II</div>
+                <div class="task-detail">Secondary focus session. Building, writing, or structured problem-solving. Use momentum from block I.</div>
+                <div class="task-tags"><span class="tag cat-direct">direct</span><span class="tag p1">high</span><span class="tag p3">2.5 hr</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="time-slot">
+          <div class="time-label">15:30</div>
+          <div class="time-content">
+            <div class="task-card indirect" data-task-id="task-admin">
+              <div class="task-checkbox" onclick="toggleTask(this,'task-admin')"></div>
+              <div class="task-body">
+                <div class="task-time-range">15:30 – 16:30</div>
+                <div class="task-title">Admin & planning</div>
+                <div class="task-detail">Update task list, capture notes, prep for tomorrow. Close open loops.</div>
+                <div class="task-tags"><span class="tag cat-indirect">indirect</span><span class="tag p2">medium</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="time-slot">
+          <div class="time-label">16:30</div>
+          <div class="time-content">
+            <div class="task-card indirect" data-task-id="task-shutdown">
+              <div class="task-checkbox" onclick="toggleTask(this,'task-shutdown')"></div>
+              <div class="task-body">
+                <div class="task-time-range">16:30 – 17:00</div>
+                <div class="task-title">Shutdown ritual</div>
+                <div class="task-detail">Review what was done. Write tomorrow's top 3. Close laptop. Say "shutdown complete."</div>
+                <div class="task-tags"><span class="tag cat-indirect">indirect</span><span class="tag p3">30 min</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="time-slot">
+          <div class="time-label" style="color:var(--green);font-weight:700;">17:00</div>
+          <div class="time-content">
+            <div class="protected-block" style="margin-bottom:4px;">
+              <span style="font-size:16px;flex-shrink:0;">🏡</span>
+              <div>
+                <div class="protected-label">Family Time · Protected</div>
+                <div class="protected-sub">17:00 – 19:30 · No work, no screens</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="time-slot">
+          <div class="time-label">18:00</div>
+          <div class="time-content">
+            <div class="task-card exercise" data-task-id="ex-family">
+              <div class="task-checkbox" onclick="toggleTask(this,'ex-family')"></div>
+              <div class="task-body">
+                <div class="task-time-range">18:00 – 18:30</div>
+                <div class="task-title">Family Fun Exercise</div>
+                <div class="task-detail">30 min active play — walk, bike ride, trampoline, or garden games.</div>
+                <div class="task-tags"><span class="tag cat-exercise">exercise</span><span class="tag p3">30 min</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENING -->
+  <div class="tab-panel" id="tab-evening">
+    <div class="section">
+      <div class="section-title">Evening Window · 19:30 – 22:00</div>
+
+      <div class="time-slot">
+        <div class="time-label">19:30</div>
+        <div class="time-content">
+          <div class="task-card indirect" data-task-id="eve-reading">
+            <div class="task-checkbox" onclick="toggleTask(this,'eve-reading')"></div>
+            <div class="task-body">
+              <div class="task-time-range">19:30 – 20:30</div>
+              <div class="task-title">Reading / Learning</div>
+              <div class="task-detail">Light reading, articles, or a course. Keep it enjoyable — no high-stakes work.</div>
+              <div class="task-tags"><span class="tag cat-indirect">indirect</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="time-slot">
+        <div class="time-label">20:30</div>
+        <div class="time-content">
+          <div class="task-card indirect" data-task-id="eve-light">
+            <div class="task-checkbox" onclick="toggleTask(this,'eve-light')"></div>
+            <div class="task-body">
+              <div class="task-time-range">20:30 – 21:30</div>
+              <div class="task-title">Light admin or creative time</div>
+              <div class="task-detail">Optional: catch up on lower-stakes correspondence, personal projects, journaling.</div>
+              <div class="task-tags"><span class="tag cat-indirect">indirect</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="time-slot">
+        <div class="time-label">21:30</div>
+        <div class="time-content">
+          <div class="task-card obligation" data-task-id="eve-wind">
+            <div class="task-checkbox" onclick="toggleTask(this,'eve-wind')"></div>
+            <div class="task-body">
+              <div class="task-time-range">21:30 – 22:00</div>
+              <div class="task-title">Wind-down routine</div>
+              <div class="task-detail">No screens, dim lights, prep for tomorrow. Good sleep = good tomorrow.</div>
+              <div class="task-tags"><span class="tag p3">obligation</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Evening Reflections</div>
+      <div class="reflection-card">
+        <div class="reflection-prompt">What moved the needle most today?</div>
+        <textarea class="reflection-input" id="ref-needle" placeholder="Write something…"></textarea>
+        <button class="reflection-save" onclick="saveReflection('needle')">Save</button>
+      </div>
+      <div class="reflection-card">
+        <div class="reflection-prompt">What would you do differently?</div>
+        <textarea class="reflection-input" id="ref-different" placeholder="Write something…"></textarea>
+        <button class="reflection-save" onclick="saveReflection('different')">Save</button>
+      </div>
+      <div class="reflection-card">
+        <div class="reflection-prompt">One thing to carry into tomorrow</div>
+        <textarea class="reflection-input" id="ref-tomorrow" placeholder="Write something…"></textarea>
+        <button class="reflection-save" onclick="saveReflection('tomorrow')">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEFERRED -->
+  <div class="tab-panel" id="tab-deferred">
+    <div class="section">
+      <div class="section-title">Deferred Tasks</div>
+      <div class="empty-state">
+        <div class="empty-icon">✨</div>
+        No deferred tasks — clean slate!<br>
+        <span style="font-size:12px;color:var(--ink-faint);">Supabase unavailable at generation time (offline run)</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Network Status</div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-size:13px;color:var(--ink-muted);">
+        <strong style="color:var(--amber);">⚠ Offline run</strong> — Supabase and Google Calendar could not be reached at 05:00 CEST. Checkboxes sync via localStorage; Supabase will update automatically for numeric task IDs when you're online.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="sync-bar" id="syncBar">Saved</div>
+
+<script>
+  const SB_URL = 'https://xwxsrsybllifbivhgojl.supabase.co';
+  const SB_KEY = 'sb_publishable_fcZRHJWzxFYrwfQVmTy0GQ_6DVu0Byk';
+  const DATE   = '2026-04-06';
+
+  // Tabs
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      document.getElementById('tab-' + t.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Now-line (Copenhagen = UTC+2 in April)
+  function updateNowLine() {
+    const now = new Date();
+    const dayMin = ((now.getUTCHours() * 60 + now.getUTCMinutes()) + 120) % 1440;
+    const h = Math.floor(dayMin / 60), m = dayMin % 60;
+    document.getElementById('nowLabel').textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+    const tl = document.getElementById('timeline');
+    if (!tl) return;
+    const pct = Math.max(0, Math.min(1, (dayMin - 450) / (22*60 - 450))); // 07:30 to 22:00
+    document.getElementById('nowLine').style.top = Math.round(pct * tl.offsetHeight) + 'px';
+  }
+  updateNowLine();
+  setInterval(updateNowLine, 60000);
+
+  // Checkboxes
+  const state = (() => { try { return JSON.parse(localStorage.getItem('brew-'+DATE)||'{}'); } catch(e) { return {}; } })();
+  document.querySelectorAll('[data-task-id]').forEach(card => {
+    if (state[card.dataset.taskId]) {
+      card.classList.add('done');
+      card.querySelector('.task-checkbox').classList.add('checked');
+    }
+  });
+
+  function toggleTask(cb, id) {
+    const card = cb.closest('[data-task-id]');
+    const done = cb.classList.toggle('checked');
+    card.classList.toggle('done', done);
+    state[id] = done;
+    try { localStorage.setItem('brew-'+DATE, JSON.stringify(state)); } catch(e) {}
+    const num = parseInt(id, 10);
+    if (!isNaN(num)) syncSB(num, done ? 'done' : 'open');
+    showToast(done ? '✓ Done' : 'Reopened');
+  }
+
+  async function syncSB(id, status) {
+    try {
+      await fetch(`${SB_URL}/rest/v1/tasks?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ status })
+      });
+    } catch(e) {}
+  }
+
+  function showToast(msg) {
+    const b = document.getElementById('syncBar');
+    b.textContent = msg;
+    b.classList.add('show');
+    setTimeout(() => b.classList.remove('show'), 1800);
+  }
+
+  // Priority edit
+  const pi = document.getElementById('priorityInput');
+  const ph = document.getElementById('priorityHint');
+  try { const s = localStorage.getItem('priority-'+DATE); if (s) pi.value = s; } catch(e) {}
+  pi.addEventListener('focus', () => ph.textContent = 'editing…');
+  pi.addEventListener('blur', () => { ph.textContent = 'tap to edit'; try { localStorage.setItem('priority-'+DATE, pi.value); } catch(e) {} showToast('Priority saved'); });
+  pi.addEventListener('keydown', e => { if (e.key==='Enter') { e.preventDefault(); pi.blur(); } });
+
+  // Copy plan
+  function copyPlan() {
+    const lines = ['Morning Brew — Monday April 6 2026', '', 'Priority: ' + pi.value, ''];
+    document.querySelectorAll('#tab-today [data-task-id]').forEach(card => {
+      const range = card.querySelector('.task-time-range')?.textContent || '';
+      const title = card.querySelector('.task-title')?.textContent || '';
+      lines.push(`${card.classList.contains('done') ? '[x]' : '[ ]'} ${range.padEnd(14)} ${title}`);
+    });
+    navigator.clipboard.writeText(lines.join('\n')).then(() => {
+      const btn = document.getElementById('copyPlanBtn');
+      btn.classList.add('copied');
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy plan'; }, 2000);
+    }).catch(() => showToast('Copy failed'));
+  }
+
+  // Reflections
+  function saveReflection(key) {
+    const el = document.getElementById('ref-' + key);
+    if (!el || !el.value.trim()) return;
+    try { const all = JSON.parse(localStorage.getItem('refl-'+DATE)||'{}'); all[key] = el.value; localStorage.setItem('refl-'+DATE, JSON.stringify(all)); } catch(e) {}
+    showToast('Reflection saved');
+  }
+  try {
+    const r = JSON.parse(localStorage.getItem('refl-'+DATE)||'{}');
+    for (const [k,v] of Object.entries(r)) { const el = document.getElementById('ref-'+k); if (el) el.value = v; }
+  } catch(e) {}
+</script>
+</body>
+</html>
