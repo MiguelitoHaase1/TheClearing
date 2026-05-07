@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lovable Denmark Data Map</title>
+  <style>
+    :root {
+      --ink: #181713;
+      --muted: #6d685f;
+      --paper: #f7f4ec;
+      --panel: #fffdf7;
+      --line: #d8d0c0;
+      --red: #df5a45;
+      --green: #0f7b63;
+      --blue: #355caa;
+      --yellow: #d8a12d;
+      --shadow: 0 18px 50px rgba(40, 33, 22, .12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(24, 23, 19, .035) 1px, transparent 1px),
+        linear-gradient(rgba(24, 23, 19, .025) 1px, transparent 1px),
+        var(--paper);
+      background-size: 44px 44px;
+      font-family: Charter, "Iowan Old Style", Georgia, serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 4px;
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 46px 0 28px;
+      border-bottom: 2px solid var(--ink);
+      background: rgba(247, 244, 236, .84);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .stamp {
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      color: var(--red);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 900px;
+      font-size: clamp(42px, 7vw, 86px);
+      line-height: .91;
+      letter-spacing: 0;
+      font-weight: 900;
+    }
+
+    .intro {
+      margin: 22px 0 0;
+      max-width: 760px;
+      font-size: 20px;
+      line-height: 1.45;
+      color: #38342d;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin: 28px 0 8px;
+    }
+
+    .metric {
+      min-height: 118px;
+      border: 2px solid var(--ink);
+      background: var(--panel);
+      box-shadow: 6px 6px 0 var(--ink);
+      padding: 15px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 36px;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 10px;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      font-size: 13px;
+      line-height: 1.25;
+      color: var(--muted);
+    }
+
+    main {
+      padding: 32px 0 60px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    section {
+      margin-bottom: 26px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 13px;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    h2 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .section-title small {
+      margin-bottom: 9px;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .card {
+      border: 2px solid var(--ink);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .canon {
+      display: grid;
+      gap: 12px;
+    }
+
+    .doc {
+      display: grid;
+      grid-template-columns: 10px 1fr auto;
+      gap: 14px;
+      align-items: start;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .doc:last-child { border-bottom: 0; }
+
+    .bar {
+      width: 10px;
+      height: 100%;
+      min-height: 58px;
+      background: var(--blue);
+    }
+
+    .bar.strategy { background: var(--red); }
+    .bar.market { background: var(--green); }
+    .bar.risk { background: var(--yellow); }
+
+    h3 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.15;
+    }
+
+    .doc p,
+    .gap p,
+    .cluster p {
+      margin: 6px 0 0;
+      color: #3d3932;
+      line-height: 1.38;
+    }
+
+    .tagrow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 9px;
+    }
+
+    .tag {
+      border: 1px solid var(--ink);
+      padding: 4px 7px;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: #fff;
+    }
+
+    .lines {
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .gaplist {
+      display: grid;
+      gap: 12px;
+    }
+
+    .gap {
+      position: relative;
+      overflow: hidden;
+      border: 2px solid var(--ink);
+      background: #fff;
+      padding: 16px 16px 16px 58px;
+    }
+
+    .gap::before {
+      content: attr(data-rank);
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border: 2px solid var(--ink);
+      background: var(--paper);
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      font-weight: 900;
+    }
+
+    .gap h3 { font-size: 18px; }
+
+    .gap.high { box-shadow: 6px 6px 0 var(--red); }
+    .gap.medium { box-shadow: 6px 6px 0 var(--yellow); }
+    .gap.low { box-shadow: 6px 6px 0 var(--green); }
+
+    .clusters {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .cluster {
+      min-height: 168px;
+      border: 2px solid var(--ink);
+      background: var(--panel);
+      padding: 16px;
+    }
+
+    .cluster ul,
+    .thin ul {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: #3d3932;
+      line-height: 1.45;
+    }
+
+    .thin {
+      border: 2px dashed var(--ink);
+      background: rgba(255, 253, 247, .72);
+      padding: 16px;
+    }
+
+    .file-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      font-size: 13px;
+    }
+
+    .file-table th,
+    .file-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 9px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .file-table th {
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .status {
+      display: inline-block;
+      min-width: 68px;
+      border: 1px solid var(--ink);
+      padding: 2px 6px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: #fff;
+    }
+
+    .status.blank { background: #f7d8d1; }
+    .status.thin { background: #ffe8ad; }
+    .status.dense { background: #d7f0e4; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+    }
+
+    .flow div {
+      border: 2px solid var(--ink);
+      background: #fff;
+      padding: 12px;
+      min-height: 90px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .flow strong {
+      font-size: 14px;
+      line-height: 1.15;
+    }
+
+    .flow span {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    footer {
+      border-top: 2px solid var(--ink);
+      padding: 18px 0 42px;
+      color: var(--muted);
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      header { position: static; }
+      .grid,
+      .clusters,
+      .metrics,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+      .doc {
+        grid-template-columns: 8px 1fr;
+      }
+      .lines {
+        grid-column: 2;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="eyebrow"><span class="stamp">L</span> Local folder view / generated May 2026</div>
+      <h1>Lovable Denmark GTM data map</h1>
+      <p class="intro">A working view over the notes in this folder: what is already well-developed, where the strategy clusters, and which white gaps deserve the next writing or research pass.</p>
+      <div class="metrics" aria-label="Folder metrics">
+        <div class="metric"><strong>37</strong><span>Markdown source notes mapped</span></div>
+        <div class="metric"><strong>2,834</strong><span>Total Markdown lines, heavily concentrated in a few canonical notes</span></div>
+        <div class="metric"><strong>4</strong><span>Empty or near-empty strategic notes</span></div>
+        <div class="metric"><strong>9</strong><span>Priority data gaps surfaced for follow-up</span></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <section>
+        <div class="section-title">
+          <h2>Canonical Spine</h2>
+          <small>Start here</small>
+        </div>
+        <div class="card canon">
+          <article class="doc">
+            <div class="bar strategy"></div>
+            <div>
+              <h3><a href="lovable-gtm.md">Lovable Go-to-Market Strategy</a></h3>
+              <p>Best single synthesis: stakeholder voices, core claims, contradictions, and open questions across the Denmark GTM thesis.</p>
+              <div class="tagrow"><span class="tag">canonical</span><span class="tag">strategy</span><span class="tag">contradictions</span></div>
+            </div>
+            <div class="lines">126 lines</div>
+          </article>
+          <article class="doc">
+            <div class="bar strategy"></div>
+            <div>
+              <h3><a href="ProductSystem_GTM.md">Lovable Denmark GTM Product System</a></h3>
+              <p>Turns the GTM role into a product architecture: CRM core, intelligence, engagement, enablement, routing, and playbook layers.</p>
+              <div class="tagrow"><span class="tag">product system</span><span class="tag">crm</span><span class="tag">build plan</span></div>
+            </div>
+            <div class="lines">363 lines</div>
+          </article>
+          <article class="doc">
+            <div class="bar market"></div>
+            <div>
+              <h3><a href="ProductLeadSales/GTM_Research_Report_April_2026.md">Product-Driven GTM Research</a></h3>
+              <p>External playbook across Lovable, Anthropic, Granola, and Wispr Flow, with a Denmark-specific phased GTM recommendation.</p>
+              <div class="tagrow"><span class="tag">research</span><span class="tag">plg</span><span class="tag">denmark</span></div>
+            </div>
+            <div class="lines">181 lines</div>
+          </article>
+          <article class="doc">
+            <div class="bar risk"></div>
+            <div>
+              <h3><a href="enterprise-ai-tools-comparison.md">Enterprise IT Readiness Analysis</a></h3>
+              <p>Useful risk framing against Replit Agent, Claude Cowork, and Claude Code. Strong basis for enterprise objection handling.</p>
+              <div class="tagrow"><span class="tag">security</span><span class="tag">governance</span><span class="tag">competition</span></div>
+            </div>
+            <div class="lines">193 lines</div>
+          </article>
+          <article class="doc">
+            <div class="bar market"></div>
+            <div>
+              <h3><a href="enterprise-ecosystem-archetypes.md">Enterprise Ecosystem Archetypes</a></h3>
+              <p>Five architecture patterns for Lovable plus Claude Code, with Domain Kit to Data Proxy as the recommended enterprise path.</p>
+              <div class="tagrow"><span class="tag">architecture</span><span class="tag">enterprise</span><span class="tag">domain kits</span></div>
+            </div>
+            <div class="lines">161 lines</div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-title">
+          <h2>White Gaps</h2>
+          <small>Highest leverage</small>
+        </div>
+        <div class="gaplist">
+          <article class="gap high" data-rank="1">
+            <h3>Actual Denmark pipeline data</h3>
+            <p>The strategy repeatedly references a 27-person warm pipeline and six-stage funnel, but there is no visible `PIPELINE.md`, account list, contact graph, or stage-by-stage conversion table in this folder.</p>
+          </article>
+          <article class="gap high" data-rank="2">
+            <h3>Usage-signal access model</h3>
+            <p>PQA/PQL signal detection depends on scoped Lovable usage data, but the data rights, owner, fields, privacy limits, and fallback signal quality are not specified.</p>
+          </article>
+          <article class="gap high" data-rank="3">
+            <h3>Production-readiness proof pack</h3>
+            <p>Several files flag a gap between enterprise ambition and Q3 2026 product readiness. Missing: current roadmap status, non-negotiable enterprise controls, and procurement-ready answers.</p>
+          </article>
+          <article class="gap medium" data-rank="4">
+            <h3>Token economics and pricing</h3>
+            <p>`TokenEconomics.md` is empty even though token-based pricing is part of the strategic thesis. This needs model, examples, counterarguments, and migration path from seat pricing.</p>
+          </article>
+          <article class="gap medium" data-rank="5">
+            <h3>AI capability-building value prop</h3>
+            <p>`ValueProp_AIcapabilityBuilding.md` is empty while capability diffusion is central to positioning. Fill with buyer pains, proof points, workshops, and measurable outcomes.</p>
+          </article>
+          <article class="gap medium" data-rank="6">
+            <h3>Local proof and lighthouse accounts</h3>
+            <p>The notes say Danish reference stories matter more than ads. Missing: named lighthouse targets, what story each could prove, and the first case-study collection template.</p>
+          </article>
+          <article class="gap medium" data-rank="7">
+            <h3>Partner strategy decision</h3>
+            <p>Consultancies appear as both risk and lever. Missing: partner segmentation, selection criteria, enablement package, and rules for when partners should not touch the account.</p>
+          </article>
+          <article class="gap low" data-rank="8">
+            <h3>Experiment ledger</h3>
+            <p>The 100-experiments idea is strong but needs a simple schema: hypothesis, contact, segment, motion, date, result, learning, and next action.</p>
+          </article>
+          <article class="gap low" data-rank="9">
+            <h3>Evidence freshness</h3>
+            <p>Many market numbers are time-sensitive. Add a source register with date checked, confidence, and refresh cadence before using the claims in external material.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <section>
+      <div class="section-title">
+        <h2>Theme Clusters</h2>
+        <small>How the folder is organized conceptually</small>
+      </div>
+      <div class="clusters">
+        <article class="cluster">
+          <h3>Strategy and positioning</h3>
+          <p>The strongest cluster. It defines Lovable as AI capability diffusion, SaaS-sprawl replacement, and a Denmark learning lab.</p>
+          <ul>
+            <li><a href="Positioning.md">Positioning.md</a></li>
+            <li><a href="Lovable-positioning.md">Lovable-positioning.md</a></li>
+            <li><a href="lovable-strategy-voices.md">lovable-strategy-voices.md</a></li>
+            <li><a href="pitch/lovable-pitch-one-pager.md">pitch/lovable-pitch-one-pager.md</a></li>
+          </ul>
+        </article>
+        <article class="cluster">
+          <h3>Enterprise adoption and risk</h3>
+          <p>Good competitive and governance material, especially for IT objection handling and enterprise architecture options.</p>
+          <ul>
+            <li><a href="enterprise-ai-tools-comparison.md">enterprise-ai-tools-comparison.md</a></li>
+            <li><a href="enterprise-ecosystem-archetypes.md">enterprise-ecosystem-archetypes.md</a></li>
+            <li><a href="product/PowerApps/PowerApps.md">product/PowerApps/PowerApps.md</a></li>
+            <li><a href="product/PowerApps/power-platform-pain-and-the-lovable-counter-positioning.md">Power Platform counter-positioning</a></li>
+          </ul>
+        </article>
+        <article class="cluster">
+          <h3>Sales operating system</h3>
+          <p>The most actionable build direction: CRM as spine, meeting briefers, relationship cadence, experiment tracking, dossiers, and playbooks.</p>
+          <ul>
+            <li><a href="ProductSystem_GTM.md">ProductSystem_GTM.md</a></li>
+            <li><a href="ai-sdr-lovable-jtbd.md">ai-sdr-lovable-jtbd.md</a></li>
+            <li><a href="ProductLeadSales/SalesFunnel_Enterprise.md">SalesFunnel_Enterprise.md</a></li>
+            <li><a href="Questions.md">Questions.md</a></li>
+          </ul>
+        </article>
+        <article class="cluster">
+          <h3>Interviews and source voices</h3>
+          <p>Good raw material, but the interview notes are uneven. Ryan, Max, and Replit notes are thin compared with Vladimir and Stockholm visit notes.</p>
+          <ul>
+            <li><a href="Interview_Vladimir.md">Interview_Vladimir.md</a></li>
+            <li><a href="Interview_Max.md">Interview_Max.md</a></li>
+            <li><a href="Interview_Ryan.md">Interview_Ryan.md</a></li>
+            <li><a href="Interviews/Stockholm_visit.md">Interviews/Stockholm_visit.md</a></li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>GTM System Flow</h2>
+        <small>From thesis to operating cadence</small>
+      </div>
+      <div class="flow">
+        <div><strong>1. Position</strong><span>AI capability diffusion and SaaS-sprawl replacement.</span></div>
+        <div><strong>2. Seed</strong><span>Warm champions, live builds, Danish tech community.</span></div>
+        <div><strong>3. Detect</strong><span>PQA/PQL signals, account news, relationship changes.</span></div>
+        <div><strong>4. Convert</strong><span>Meeting briefs, domain kits, pilots, stakeholder maps.</span></div>
+        <div><strong>5. Learn</strong><span>Experiments, win/loss, playbook compiler, local proof.</span></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>Thin Notes</h2>
+        <small>Fill or archive</small>
+      </div>
+      <div class="thin">
+        <p>These files currently create visible white space in the knowledge base. They may be placeholders, but each should either become useful or be explicitly archived so the canonical path stays clear.</p>
+        <ul>
+          <li><a href="TokenEconomics.md">TokenEconomics.md</a> - 0 lines</li>
+          <li><a href="ValueProp_AIcapabilityBuilding.md">ValueProp_AIcapabilityBuilding.md</a> - 0 lines</li>
+          <li><a href="ProductExperience.md">ProductExperience.md</a> - 2 lines</li>
+          <li><a href="AIsurprisingFacts/AlwaysBehind.md">AIsurprisingFacts/AlwaysBehind.md</a>, <a href="AIsurprisingFacts/AItiredness.md">AItiredness.md</a>, <a href="AIsurprisingFacts/StepOnToes.md">StepOnToes.md</a> - 2 lines each</li>
+          <li><a href="ModelChoice.md">ModelChoice.md</a>, <a href="ModelAgnostic.md">ModelAgnostic.md</a>, <a href="Replit_Agent4.md">Replit_Agent4.md</a> - useful topics, but too thin to support external claims yet</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>File Inventory</h2>
+        <small>Selected source map</small>
+      </div>
+      <div class="card">
+        <table class="file-table">
+          <thead>
+            <tr><th>File</th><th>Theme</th><th>Status</th><th>Use</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><a href="ProductSystem_GTM.md">ProductSystem_GTM.md</a></td><td>Sales OS</td><td><span class="status dense">Dense</span></td><td>Build blueprint for CRM-centered GTM agent.</td></tr>
+            <tr><td><a href="OfficeSpace/copenhagen-coworking-spaces.md">copenhagen-coworking-spaces.md</a></td><td>Ops</td><td><span class="status dense">Dense</span></td><td>Office shortlist and decision framework.</td></tr>
+            <tr><td><a href="enterprise-ai-tools-comparison.md">enterprise-ai-tools-comparison.md</a></td><td>Risk</td><td><span class="status dense">Dense</span></td><td>Enterprise IT readiness and competitive risk matrix.</td></tr>
+            <tr><td><a href="lovable-strategy-voices.md">lovable-strategy-voices.md</a></td><td>Strategy</td><td><span class="status dense">Dense</span></td><td>Stakeholder voice map and contradictions.</td></tr>
+            <tr><td><a href="pitch/lovable-pitch-enterprise-v2.md">pitch/lovable-pitch-enterprise-v2.md</a></td><td>Pitch</td><td><span class="status dense">Dense</span></td><td>Enterprise advisor-frame pitch draft.</td></tr>
+            <tr><td><a href="ProductLeadSales/GTM_Research_Report_April_2026.md">GTM_Research_Report_April_2026.md</a></td><td>Research</td><td><span class="status dense">Dense</span></td><td>External GTM patterns and Denmark playbook.</td></tr>
+            <tr><td><a href="Interview_Vladimir.md">Interview_Vladimir.md</a></td><td>Interview</td><td><span class="status thin">Medium</span></td><td>Good source on FDE and roadmap reality.</td></tr>
+            <tr><td><a href="Interview_Ryan.md">Interview_Ryan.md</a></td><td>Interview</td><td><span class="status thin">Thin</span></td><td>Needs richer source notes or transcript extraction.</td></tr>
+            <tr><td><a href="TokenEconomics.md">TokenEconomics.md</a></td><td>Pricing</td><td><span class="status blank">Blank</span></td><td>Critical missing strategic argument.</td></tr>
+            <tr><td><a href="ValueProp_AIcapabilityBuilding.md">ValueProp_AIcapabilityBuilding.md</a></td><td>Value prop</td><td><span class="status blank">Blank</span></td><td>Critical missing enterprise narrative support.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">Static local file. Source links are relative to this folder and open the underlying notes when viewed from the filesystem.</div>
+  </footer>
+</body>
+</html>
