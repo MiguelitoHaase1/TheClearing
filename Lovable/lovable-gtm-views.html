@@ -1,0 +1,886 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lovable GTM Views</title>
+  <style>
+    :root {
+      --ink: #121212;
+      --ash: #f2f2ee;
+      --paper: #fbfaf4;
+      --muted: #6c6a63;
+      --line: #d9d6c9;
+      --coral: #ef5c48;
+      --blue: #2d5f9a;
+      --green: #0e8068;
+      --gold: #d69b2d;
+      --violet: #6451a5;
+      --shadow: 0 18px 46px rgba(18, 18, 18, .12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background:
+        radial-gradient(circle at 18% 10%, rgba(239, 92, 72, .13), transparent 28%),
+        radial-gradient(circle at 84% 24%, rgba(14, 128, 104, .14), transparent 31%),
+        linear-gradient(135deg, #fbfaf4 0%, #f2f2ee 100%);
+      color: var(--ink);
+      font-family: "Avenir Next", "Segoe UI", Helvetica, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 4px;
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      min-height: 92vh;
+      display: grid;
+      align-items: end;
+      padding: 28px 0 36px;
+      border-bottom: 2px solid var(--ink);
+      background:
+        linear-gradient(90deg, rgba(18, 18, 18, .05) 1px, transparent 1px),
+        linear-gradient(rgba(18, 18, 18, .04) 1px, transparent 1px);
+      background-size: 38px 38px;
+    }
+
+    nav {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      width: min(940px, calc(100% - 28px));
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px;
+      border: 2px solid var(--ink);
+      background: rgba(251, 250, 244, .9);
+      backdrop-filter: blur(14px);
+      box-shadow: 7px 7px 0 var(--ink);
+    }
+
+    nav a {
+      min-height: 34px;
+      display: inline-grid;
+      place-items: center;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      background: #fffdf6;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      text-decoration: none;
+      letter-spacing: .04em;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr);
+      gap: 28px;
+      align-items: end;
+      padding-top: 96px;
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .mark {
+      display: inline-grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: var(--coral);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 900px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(54px, 9vw, 124px);
+      line-height: .88;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin: 24px 0 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(21px, 2.6vw, 34px);
+      line-height: 1.18;
+    }
+
+    .answer {
+      border: 2px solid var(--ink);
+      background: var(--ink);
+      color: var(--paper);
+      box-shadow: 10px 10px 0 var(--coral);
+      padding: 20px;
+    }
+
+    .answer h2,
+    .answer p {
+      margin: 0;
+    }
+
+    .answer h2 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #fac7be;
+    }
+
+    .answer p {
+      margin-top: 13px;
+      font-size: 18px;
+      line-height: 1.45;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 36px;
+    }
+
+    .metric {
+      min-height: 122px;
+      border: 2px solid var(--ink);
+      background: #fffdf6;
+      padding: 16px;
+      box-shadow: 6px 6px 0 var(--ink);
+    }
+
+    .metric strong {
+      display: block;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 40px;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    main {
+      padding: 38px 0 64px;
+    }
+
+    section {
+      scroll-margin-top: 96px;
+      margin: 0 0 42px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 4vw, 52px);
+      line-height: .95;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      max-width: 420px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .panel,
+    .voice,
+    .step,
+    .gap,
+    .source {
+      border: 2px solid var(--ink);
+      background: #fffdf6;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .panel.dark {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .panel.accent {
+      background: var(--coral);
+      color: #fff;
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    h3 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 25px;
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    p {
+      line-height: 1.5;
+    }
+
+    .panel p,
+    .voice p,
+    .step p,
+    .gap p,
+    .source p {
+      margin: 10px 0 0;
+      color: #3c3a35;
+    }
+
+    .dark p,
+    .dark .mini {
+      color: #d8d6cb;
+    }
+
+    .accent p,
+    .accent .mini {
+      color: #fff4ef;
+    }
+
+    .mini {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--coral);
+    }
+
+    .blue { background: var(--blue); }
+    .green { background: var(--green); }
+    .gold { background: var(--gold); }
+    .violet { background: var(--violet); }
+
+    .voice {
+      min-height: 230px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .voice::after {
+      content: attr(data-index);
+      position: absolute;
+      right: 12px;
+      bottom: -14px;
+      color: rgba(18, 18, 18, .08);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 86px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .funnel {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .step {
+      min-height: 216px;
+      padding: 15px;
+    }
+
+    .step b {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .step h3 {
+      font-size: 20px;
+    }
+
+    .layers {
+      display: grid;
+      grid-template-columns: .82fr 1.18fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .stack {
+      display: grid;
+      gap: 9px;
+    }
+
+    .layer {
+      display: grid;
+      grid-template-columns: 82px 1fr;
+      gap: 12px;
+      align-items: center;
+      min-height: 66px;
+      padding: 10px;
+      border: 2px solid var(--ink);
+      background: #fffdf6;
+    }
+
+    .layer strong {
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 42px;
+      background: var(--ink);
+      color: var(--paper);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+    }
+
+    .layer span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 2px solid var(--ink);
+      background: #fffdf6;
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.35;
+    }
+
+    th {
+      background: var(--ink);
+      color: var(--paper);
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .contradictions {
+      counter-reset: tension;
+      display: grid;
+      gap: 12px;
+    }
+
+    .tension {
+      counter-increment: tension;
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 16px;
+      border: 2px solid var(--ink);
+      background: #fffdf6;
+    }
+
+    .tension::before {
+      content: counter(tension);
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border: 2px solid var(--ink);
+      background: var(--gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .tension h3 {
+      font-size: 21px;
+    }
+
+    .tension p {
+      margin: 7px 0 0;
+      color: #3c3a35;
+    }
+
+    .sources {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    footer {
+      padding: 24px 0;
+      border-top: 2px solid var(--ink);
+      background: var(--ink);
+      color: var(--paper);
+      font-size: 13px;
+    }
+
+    footer a { color: var(--paper); }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .grid-2,
+      .layers {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics,
+      .grid-3,
+      .sources {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .funnel {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      nav {
+        position: static;
+        transform: none;
+        width: min(100% - 24px, 940px);
+        margin: 12px auto 0;
+      }
+
+      header {
+        min-height: auto;
+        padding-top: 12px;
+      }
+
+      .hero-grid {
+        padding-top: 36px;
+      }
+
+      .metrics,
+      .grid-3,
+      .sources,
+      .funnel {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        align-items: start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav aria-label="Page sections">
+    <a href="#views">Views</a>
+    <a href="#voices">Voices</a>
+    <a href="#funnel">Funnel</a>
+    <a href="#system">System</a>
+    <a href="#denmark">Denmark</a>
+    <a href="#tensions">Tensions</a>
+    <a href="#gaps">Gaps</a>
+  </nav>
+
+  <header>
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <div class="kicker"><span class="mark">L</span> Lovable GTM data / local synthesis</div>
+          <h1>What are my views?</h1>
+          <p class="lead">Your Lovable GTM material points to one operating thesis: make Denmark a relationship-led learning lab where bottom-up product adoption becomes enterprise architecture.</p>
+        </div>
+        <aside class="answer" aria-label="Short answer">
+          <h2>Short answer</h2>
+          <p>You have seven usable views: the enterprise thesis, stakeholder voices, Denmark motion, six-stage funnel, product-system architecture, contradictions, and data gaps. The sharpest view is Michael's: Domain Kits first, Data Proxy later, powered by a warm-relationship CRM that compounds every meeting.</p>
+        </aside>
+      </div>
+
+      <div class="metrics" aria-label="Key GTM metrics">
+        <div class="metric"><strong>$400M</strong><span>ARR cited across the Lovable GTM research and pitch material.</span></div>
+        <div class="metric"><strong>27</strong><span>Warm-pipeline contacts referenced as the CRM seed universe.</span></div>
+        <div class="metric"><strong>6</strong><span>Enterprise funnel stages from PQA discovery to data project.</span></div>
+        <div class="metric"><strong>1%</strong><span>Customers running core production functionality, with 99% still prototyping.</span></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="views">
+      <div class="section-head">
+        <h2>The Seven Views</h2>
+        <p>A compact reading of all the GTM data in this folder: what each view is for, and what decision it should inform.</p>
+      </div>
+      <div class="grid-3">
+        <article class="panel accent">
+          <div class="mini"><span class="dot"></span> View 01</div>
+          <h3>Enterprise Thesis</h3>
+          <p>Lovable is not pitched as another developer tool. The Denmark narrative is AI capability diffusion for the 99%, replacing SaaS sprawl with domain experts building their own internal tools.</p>
+        </article>
+        <article class="panel">
+          <div class="mini"><span class="dot blue"></span> View 02</div>
+          <h3>Stakeholder Voices</h3>
+          <p>Ryan sells load-bearing software. Max narrows enterprise to internal apps. Vladimir injects product reality. Michael turns Denmark into the learning lab and productized country-GM model.</p>
+        </article>
+        <article class="panel">
+          <div class="mini"><span class="dot green"></span> View 03</div>
+          <h3>Denmark Motion</h3>
+          <p>No aggressive outbound. Seed champions, build local proof, respect consensus, use warm introductions, and convert visible product usage into enterprise conversations.</p>
+        </article>
+        <article class="panel">
+          <div class="mini"><span class="dot gold"></span> View 04</div>
+          <h3>Enterprise Funnel</h3>
+          <p>The motion runs PQA to PQL to team pilots to executive dogfooding to a killer CEO/CTO pitch to a governed data project.</p>
+        </article>
+        <article class="panel">
+          <div class="mini"><span class="dot violet"></span> View 05</div>
+          <h3>Product System</h3>
+          <p>The CRM is the spine. Research, signal detection, meeting briefers, memory, cadence, enablement, and playbook compilation are the nervous system.</p>
+        </article>
+        <article class="panel dark">
+          <div class="mini"><span class="dot"></span> View 06</div>
+          <h3>Contradictions</h3>
+          <p>The strategy is strongest when it names its own tensions: enterprise readiness, security, partner leverage, Denmark's goal, and the line between internal and production-critical.</p>
+        </article>
+        <article class="panel">
+          <div class="mini"><span class="dot blue"></span> View 07</div>
+          <h3>Data Gaps</h3>
+          <p>The missing operational data is the actual pipeline table, scoped Lovable usage access, stage conversion rates, security readiness, and customer-facing case proof.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="voices">
+      <div class="section-head">
+        <h2>Stakeholder Views</h2>
+        <p>The strongest GTM file is a voice map. It shows alignment on destination and disagreement on timing, risk, and route.</p>
+      </div>
+      <div class="grid-3">
+        <article class="voice" data-index="R">
+          <div class="mini"><span class="dot"></span> Ryan / CRO</div>
+          <h3>Load-bearing software</h3>
+          <p>Lovable should graduate from prototypes into production-grade internal tools. The Country GM model is the local scaling mechanism: founder-style operator, small team, local P&amp;L, FDE support.</p>
+        </article>
+        <article class="voice" data-index="M">
+          <div class="mini"><span class="dot blue"></span> Max / GTM</div>
+          <h3>Segment hard</h3>
+          <p>Startups can build everything. Mid-market replaces simple SaaS. Enterprise focuses on internal apps on top of data lakes. Product teams can be ceded to Replit, Stitch, and Figma.</p>
+        </article>
+        <article class="voice" data-index="V">
+          <div class="mini"><span class="dot gold"></span> Vladimir / FDE</div>
+          <h3>Reality check</h3>
+          <p>Lovable already has 200+ users across roughly half of Fortune 500, but 99% are prototyping. Production readiness depends on branching, maintainers, access controls, audit trails, and SOC 2.</p>
+        </article>
+        <article class="voice" data-index="M">
+          <div class="mini"><span class="dot green"></span> Michael / DK GM</div>
+          <h3>Learning lab</h3>
+          <p>Denmark is less a revenue prize than a controlled learning environment. Run 100 experiments, turn them into a Country GM playbook, and prove the product by building the sales system with it.</p>
+        </article>
+        <article class="voice" data-index="E">
+          <div class="mini"><span class="dot violet"></span> Elena / Growth</div>
+          <h3>Product is GTM</h3>
+          <p>Every app URL is a demo. The product must be loved on first use because sharing is the distribution engine. PMF is re-found quarterly as model capabilities shift.</p>
+        </article>
+        <article class="voice" data-index="P">
+          <div class="mini"><span class="dot"></span> External critique</div>
+          <h3>Mind the ceiling</h3>
+          <p>Outside analysis warns Lovable may be a 70% solution claiming a higher maturity level. The enterprise pitch needs to separate what is live today from what is roadmap.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="funnel">
+      <div class="section-head">
+        <h2>Enterprise Funnel</h2>
+        <p>The GTM data does not describe a top-down enterprise sale. It describes a bottom-up pull that earns executive permission later.</p>
+      </div>
+      <div class="funnel">
+        <article class="step">
+          <b>Stage 1</b>
+          <h3>Grow PQAs</h3>
+          <p>Find companies with organic Lovable usage. Marketing and mid-size success stories create the initial product-qualified account signal.</p>
+        </article>
+        <article class="step">
+          <b>Stage 2</b>
+          <h3>Find PQLs</h3>
+          <p>Convert team leads with budget. They need to see Lovable as more than a gimmick and be willing to sponsor bottom-up adoption.</p>
+        </article>
+        <article class="step">
+          <b>Stage 3</b>
+          <h3>Three-team pilot</h3>
+          <p>Hyper-care pilots driven by team leads, not corporate theatre. The goal is beautiful stories and visible internal momentum.</p>
+        </article>
+        <article class="step">
+          <b>Stage 4</b>
+          <h3>CEO dogfooding</h3>
+          <p>Use internal AI events and team proof to pull CEO, CEO-1, or CEO-2 into hands-on usage with an EA or PA.</p>
+        </article>
+        <article class="step">
+          <b>Stage 5</b>
+          <h3>Killer pitch</h3>
+          <p>Bring Lovable, agencies, architecture, and security answers into a CEO/CTO conversation that moves shadow IT into the open.</p>
+        </article>
+        <article class="step">
+          <b>Stage 6</b>
+          <h3>Data project</h3>
+          <p>FDEs and agencies build the governed data layer that lets the internal-tool motion scale safely across the enterprise.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="system">
+      <div class="section-head">
+        <h2>GTM Product System</h2>
+        <p>The CRM is deliberately not Salesforce. It is a relationship memory and signal system for one Country GM in one trust-heavy market.</p>
+      </div>
+      <div class="layers">
+        <div class="stack" aria-label="Product system layers">
+          <div class="layer"><strong>5</strong><div>Playbook &amp; Strategy<span>Learn from the system and scale the country model.</span></div></div>
+          <div class="layer"><strong>4</strong><div>Interface &amp; Routing<span>Calendar, Granola, channels, product-gap detection.</span></div></div>
+          <div class="layer"><strong>3</strong><div>Customer Enablement<span>Pilot kits, success stories, stakeholder maps.</span></div></div>
+          <div class="layer"><strong>2</strong><div>Action &amp; Engagement<span>Meeting briefs, memory, cadence, experiments.</span></div></div>
+          <div class="layer"><strong>1</strong><div>Intelligence &amp; Signal<span>DAS research, PQA/PQL radar, company dossiers.</span></div></div>
+          <div class="layer"><strong>0</strong><div>The CRM<span>Contacts, companies, deal stage, activity, relationship strength.</span></div></div>
+        </div>
+        <article class="panel dark">
+          <div class="mini"><span class="dot"></span> Operating model</div>
+          <h3>The system thinks about the pipeline when Michael is not thinking about it.</h3>
+          <p>Daily research feeds the CRM. Product usage and public signals identify PQA/PQL momentum. Meeting briefers make every coffee personal. Conversation memory makes each next interaction the +1, not a reset. Experiment tracking turns Denmark into evidence, not anecdotes.</p>
+          <p>The proof point is meta: a non-engineering Country GM builds a working AI-powered sales excellence operation in Lovable's own spirit.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="denmark">
+      <div class="section-head">
+        <h2>Denmark Motion</h2>
+        <p>Denmark is a high-trust, low-tolerance-for-sales market. The GTM motion has to feel like usefulness before it feels like selling.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Phase</th>
+              <th>Move</th>
+              <th>Why It Fits Denmark</th>
+              <th>Output</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Months 1-3</td>
+              <td>Seed champions at Danish tech companies, build live, use warm Nordic intros.</td>
+              <td>Danish buyers distrust volume outreach but respond to credible people and visible craft.</td>
+              <td>10-15 champions, first local builds, public proof.</td>
+            </tr>
+            <tr>
+              <td>Months 3-6</td>
+              <td>Track product-qualified accounts and leads, then offer workspace, support, and structure.</td>
+              <td>Consensus cultures need bottom-up evidence before top-down permission.</td>
+              <td>Team pilots, PQL conversations, Danish success stories.</td>
+            </tr>
+            <tr>
+              <td>Months 6-12</td>
+              <td>Run community, land a lighthouse account, add trusted partners where they increase reach.</td>
+              <td>Danish enterprise buyers look sideways at peers before they move.</td>
+              <td>Reference account, repeatable motion, country playbook.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tensions">
+      <div class="section-head">
+        <h2>Strategic Tensions</h2>
+        <p>These are not flaws in the work. They are the decisions the GTM system must make explicit.</p>
+      </div>
+      <div class="contradictions">
+        <article class="tension">
+          <div>
+            <h3>Enterprise now vs. production later</h3>
+            <p>The story wants enterprise urgency, while the roadmap still needs branching, access controls, audit trails, and security maturity.</p>
+          </div>
+        </article>
+        <article class="tension">
+          <div>
+            <h3>Internal-only vs. load-bearing internal systems</h3>
+            <p>Everyone says internal apps only, but a Slack replacement shows that internal can still be mission-critical.</p>
+          </div>
+        </article>
+        <article class="tension">
+          <div>
+            <h3>Direct learning vs. consultancy leverage</h3>
+            <p>Direct FDE work creates learning depth. Partners create reach. Denmark needs a clear rule for when to use each.</p>
+          </div>
+        </article>
+        <article class="tension">
+          <div>
+            <h3>Learning lab vs. revenue market</h3>
+            <p>The files describe Denmark as both a low-risk learning market and a meaningful TAM. The operating metric should choose which wins in months 1-3.</p>
+          </div>
+        </article>
+        <article class="tension">
+          <div>
+            <h3>Domain Kits vs. Data Proxy</h3>
+            <p>The recommended path is not either/or: sell department kits first, then let cross-department demand pull the proxy into existence.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="gaps">
+      <div class="section-head">
+        <h2>Data Gaps</h2>
+        <p>These are the practical holes to close before this becomes an operating dashboard instead of a strategic synthesis.</p>
+      </div>
+      <div class="grid-3">
+        <article class="gap">
+          <div class="mini"><span class="dot"></span> Pipeline</div>
+          <h3>Actual contact graph</h3>
+          <p>The system references a 27-person warm pipeline, but the visible folder lacks the live pipeline table, relationship taxonomy, and stage-by-stage status.</p>
+        </article>
+        <article class="gap">
+          <div class="mini"><span class="dot blue"></span> Usage</div>
+          <h3>Scoped Lovable data</h3>
+          <p>PQA/PQL radar depends on Danish-domain usage data. The access owner, fields, privacy limits, and fallback signals need definition.</p>
+        </article>
+        <article class="gap">
+          <div class="mini"><span class="dot gold"></span> Readiness</div>
+          <h3>Enterprise capability state</h3>
+          <p>Pitch material should separate live security and governance features from Q3 2026 roadmap items before CEO/CTO conversations.</p>
+        </article>
+        <article class="gap">
+          <div class="mini"><span class="dot green"></span> Proof</div>
+          <h3>Local case library</h3>
+          <p>Denmark needs examples from companies buyers recognize. A Pleo or Novo story is more valuable locally than a generic global logo.</p>
+        </article>
+        <article class="gap">
+          <div class="mini"><span class="dot violet"></span> Metrics</div>
+          <h3>Learning vs. revenue scorecard</h3>
+          <p>If Denmark is a learning lab, track experiments, validated patterns, and playbook assets alongside pipeline value.</p>
+        </article>
+        <article class="gap">
+          <div class="mini"><span class="dot"></span> Governance</div>
+          <h3>Risk answers</h3>
+          <p>Security scanning, data handling, access controls, audit trails, and ownership of generated apps need crisp answers before procurement reviews.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="sources">
+      <div class="section-head">
+        <h2>Source Map</h2>
+        <p>The website is a synthesis of local files in this workspace. Links open the underlying notes when viewed from the filesystem.</p>
+      </div>
+      <div class="sources">
+        <article class="source">
+          <h3><a href="lovable-gtm.md">lovable-gtm.md</a></h3>
+          <p>Canonical GTM synthesis, claims, voices, contradictions, open questions.</p>
+        </article>
+        <article class="source">
+          <h3><a href="lovable-strategy-voices.md">lovable-strategy-voices.md</a></h3>
+          <p>Stakeholder voice walk across Anton, Ryan, Max, Vladimir, Michael, Elena, and external critique.</p>
+        </article>
+        <article class="source">
+          <h3><a href="ProductSystem_GTM.md">ProductSystem_GTM.md</a></h3>
+          <p>CRM-centered product system for the Denmark Country GM motion.</p>
+        </article>
+        <article class="source">
+          <h3><a href="ProductLeadSales/SalesFunnel_Enterprise.md">SalesFunnel_Enterprise.md</a></h3>
+          <p>Six-stage product-led enterprise funnel from PQA to data project.</p>
+        </article>
+        <article class="source">
+          <h3><a href="Positioning.md">Positioning.md</a></h3>
+          <p>Enterprise narrative: AI capability diffusion, SaaS sprawl replacement, and 99% builder energy.</p>
+        </article>
+        <article class="source">
+          <h3><a href="enterprise-ecosystem-archetypes.md">enterprise-ecosystem-archetypes.md</a></h3>
+          <p>Domain Kit to Data Proxy maturity path and enterprise architecture patterns.</p>
+        </article>
+        <article class="source">
+          <h3><a href="ProductLeadSales/GTM_Research_Report_April_2026.md">GTM Research Report</a></h3>
+          <p>External product-driven GTM pattern research and Denmark playbook.</p>
+        </article>
+        <article class="source">
+          <h3><a href="enterprise-ai-tools-comparison.md">enterprise-ai-tools-comparison.md</a></h3>
+          <p>Security, governance, and competitive positioning against Replit, Claude, and others.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">Generated from local Lovable GTM notes. Best opened directly as <a href="lovable-gtm-views.html">lovable-gtm-views.html</a>.</div>
+  </footer>
+</body>
+</html>
